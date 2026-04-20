@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Không index trang pháp lý (tuỳ chọn - bỏ comment nếu muốn ẩn)
+# Disallow: /dieu-khoan.html
+# Disallow: /bao-mat.html
+# Disallow: /cookie.html
+
+# Sitemap
+Sitemap: https://autopostvn.io.vn/sitemap.xml
+
+# Crawl delay (lịch sự với bot)
+Crawl-delay: 1
