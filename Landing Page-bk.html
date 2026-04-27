@@ -546,7 +546,7 @@
           <span>không còn sai sót</span>
         </h1>
         <p class="hero-sub fade-up delay-2">
-          INVONE tự động lấy hóa đơn từ Tổng cục Thuế (GDT), tạo tờ khai & sổ sách thuế chỉ với <strong style="color:rgba(255,255,255,0.85)">1 click</strong>. Dành cho SME, kế toán trưởng và hộ kinh doanh Việt Nam.
+          INVONE tự động lấy hóa đơn từ Tổng cục Thuế (GDT), tạo tờ khai & sổ sách thuế chỉ với <strong style="color:rgba(255,255,255,0.85)">1 clic</strong>. Dành cho SME, kế toán trưởng và hộ kinh doanh Việt Nam.
         </p>
         <div class="hero-form fade-up delay-3" id="hero-form">
           <input class="hero-input" type="tel" placeholder="Số điện thoại của bạn" id="hero-phone"/>
@@ -877,116 +877,79 @@
     <div class="pricing-header">
       <div class="tag"><span class="tag-dot"></span>Bảng giá</div>
       <div class="section-title" style="margin-top:16px;">Minh bạch, không phí ẩn</div>
-      <div class="section-sub">Báo giá có hiệu lực từ 01/04/2026 — 30/06/2026. Không giới hạn số người dùng.</div>
-      <div style="margin-top:16px;">
-        <a href="baogia.pdf" download="BaoGia-AUTOPOST-VN-Invoice.pdf"
-           style="display:inline-flex;align-items:center;gap:8px;background:#EEF2FF;border:1.5px solid #C7D2FE;color:#4338CA;font-size:14px;font-weight:700;padding:10px 20px;border-radius:10px;text-decoration:none;transition:all 0.2s;"
-           onmouseover="this.style.background='#E0E7FF'" onmouseout="this.style.background='#EEF2FF'">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v8M5 7l3 3 3-3" stroke="#4338CA" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="11" width="12" height="2.5" rx="1.25" fill="#4338CA"/></svg>
-          Tải bảng báo giá đầy đủ (PDF)
-        </a>
+      <div class="section-sub">Bắt đầu miễn phí 30 ngày. Không cần thẻ tín dụng.</div>
+      <div class="pricing-toggle">
+        <span class="toggle-label">Hàng tháng</span>
+        <div class="toggle-switch" id="billing-toggle" onclick="toggleBilling()">
+          <div class="toggle-knob" id="toggle-knob" style="left:3px"></div>
+        </div>
+        <span class="toggle-label">Hàng năm</span>
+        <span class="toggle-badge">Tiết kiệm 20%</span>
       </div>
     </div>
-
-    <!-- Gói 1: Năm -->
-    <div style="margin-bottom:32px;">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-        <div style="font-size:16px;font-weight:800;color:var(--text);">Gói Năm</div>
-        <div style="background:#ECFDF5;color:#065F46;font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;">Không giới hạn HĐ tải về · Giới hạn 1 MST</div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="price-plan">Cơ bản</div>
+        <div class="price-name">Starter</div>
+        <div class="price-desc">Dành cho hộ kinh doanh và freelancer quản lý thuế cá nhân.</div>
+        <div class="price-amount">
+          <span class="price-curr">₫</span>
+          <span class="price-num" id="price-starter">199k</span>
+          <span class="price-period">/tháng</span>
+        </div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#EEF2FF"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#4338CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Đồng bộ đến 100 HĐ/tháng</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#EEF2FF"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#4338CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Tờ khai GTGT tự động</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#EEF2FF"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#4338CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Sổ mua/bán hàng cơ bản</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#EEF2FF"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#4338CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>1 người dùng</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#EEF2FF"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#4338CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Email support</li>
+        </ul>
+        <button class="btn-outline">Dùng thử miễn phí</button>
       </div>
-      <div class="pricing-grid" style="grid-template-columns:1fr;">
-        <div class="pricing-card popular" style="max-width:400px;">
-          <div class="popular-badge">🔥 Đơn giản nhất</div>
-          <div class="price-plan">Sử dụng cả năm</div>
-          <div class="price-name">Gói Năm</div>
-          <div class="price-desc">Tải không giới hạn hóa đơn trong 1 năm. Dành cho 1 MST.</div>
-          <div class="price-amount">
-            <span class="price-curr">₫</span>
-            <span class="price-num">668.000</span>
-            <span class="price-period">/năm</span>
-          </div>
-          <div class="price-divider"></div>
-          <ul class="price-features">
-            <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="rgba(255,255,255,0.2)"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Không giới hạn số lượng hóa đơn tải về</li>
-            <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="rgba(255,255,255,0.2)"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Giới hạn 1 tài khoản = 1 MST</li>
-            <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="rgba(255,255,255,0.2)"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Không giới hạn người dùng</li>
-            <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="rgba(255,255,255,0.2)"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Tờ khai GTGT/TNCN tự động</li>
-            <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="rgba(255,255,255,0.2)"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Giới hạn thời gian sử dụng 1 năm</li>
-          </ul>
-          <a href="https://autopostvn.cloud" target="_blank" class="btn-white" style="display:block;text-align:center;padding:13px;border-radius:10px;background:white;color:#4338CA;font-size:15px;font-weight:700;">Mấy thử ngay →</a>
+      <div class="pricing-card popular">
+        <div class="popular-badge">🔥 Phổ biến nhất</div>
+        <div class="price-plan">Chuyên nghiệp</div>
+        <div class="price-name">Professional</div>
+        <div class="price-desc">Lý tưởng cho SME và kế toán trưởng quản lý nhiều pháp nhân.</div>
+        <div class="price-amount">
+          <span class="price-curr">₫</span>
+          <span class="price-num" id="price-pro">499k</span>
+          <span class="price-period">/tháng</span>
         </div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="rgba(255,255,255,0.2)"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Không giới hạn hóa đơn</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="rgba(255,255,255,0.2)"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>GTGT + TNCN + TNDN</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="rgba(255,255,255,0.2)"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Xuất XML nộp eTax</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="rgba(255,255,255,0.2)"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>5 người dùng · 3 pháp nhân</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="rgba(255,255,255,0.2)"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Nhắc nhở deadline tự động</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="rgba(255,255,255,0.2)"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Hỗ trợ chat ưu tiên</li>
+        </ul>
+        <button class="btn-white">Dùng thử miễn phí</button>
       </div>
-    </div>
-
-    <!-- Gói 2: Theo số HĐ -->
-    <div>
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="font-size:16px;font-weight:800;color:var(--text);">Gói theo số lượng hóa đơn</div>
-          <div style="background:#EEF2FF;color:#4338CA;font-size:12px;font-weight:700;padding:4px 12px;border-radius:100px;">Không giới hạn thời gian · Giới hạn 1 MST</div>
+      <div class="pricing-card">
+        <div class="price-plan">Doanh nghiệp</div>
+        <div class="price-name">Enterprise</div>
+        <div class="price-desc">Cho doanh nghiệp lớn cần tùy chỉnh và tích hợp hệ thống ERP.</div>
+        <div class="price-amount">
+          <span class="price-curr"></span>
+          <span class="price-num" id="price-ent" style="font-size:28px;">Liên hệ</span>
         </div>
-        <div style="font-size:13px;color:var(--gray-500);">Mua nhiều gói cộng dồn · Chuyển sang năm tiếp theo nếu chưa dùng hết</div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
-        <div class="pricing-card" style="padding:24px;">
-          <div class="price-plan">300 Hóa đơn</div>
-          <div class="price-amount" style="margin-bottom:16px;">
-            <span class="price-curr">₫</span>
-            <span class="price-num" style="font-size:28px;">379.000</span>
-          </div>
-          <div class="price-desc" style="margin-bottom:16px;">Phù hợp hộ kinh doanh nhỏ, giao dịch ít.</div>
-          <a href="https://autopostvn.cloud" target="_blank" class="btn-outline" style="display:block;text-align:center;">Chọn gói này</a>
-        </div>
-        <div class="pricing-card" style="padding:24px;">
-          <div class="price-plan">1.000 Hóa đơn</div>
-          <div class="price-amount" style="margin-bottom:16px;">
-            <span class="price-curr">₫</span>
-            <span class="price-num" style="font-size:28px;">579.000</span>
-          </div>
-          <div class="price-desc" style="margin-bottom:16px;">Phù hợp SME giao dịch vừa.</div>
-          <a href="https://autopostvn.cloud" target="_blank" class="btn-outline" style="display:block;text-align:center;">Chọn gói này</a>
-        </div>
-        <div class="pricing-card popular" style="padding:24px;">
-          <div class="popular-badge">🔥 Phổ biến</div>
-          <div class="price-plan">2.000 Hóa đơn</div>
-          <div class="price-amount" style="margin-bottom:16px;">
-            <span class="price-curr">₫</span>
-            <span class="price-num" style="font-size:28px;">779.000</span>
-          </div>
-          <div class="price-desc" style="color:rgba(255,255,255,0.7);margin-bottom:16px;">Phù hợp doanh nghiệp vừa giao dịch nhiều.</div>
-          <a href="https://autopostvn.cloud" target="_blank" class="btn-white" style="display:block;text-align:center;padding:10px;border-radius:10px;background:white;color:#4338CA;font-size:14px;font-weight:700;">Chọn gói này</a>
-        </div>
-        <div class="pricing-card" style="padding:24px;">
-          <div class="price-plan">5.000 Hóa đơn</div>
-          <div class="price-amount" style="margin-bottom:16px;">
-            <span class="price-curr">₫</span>
-            <span class="price-num" style="font-size:28px;">979.000</span>
-          </div>
-          <div class="price-desc" style="margin-bottom:16px;">Phù hợp công ty giao dịch lớn.</div>
-          <a href="https://autopostvn.cloud" target="_blank" class="btn-outline" style="display:block;text-align:center;">Chọn gói này</a>
-        </div>
-      </div>
-      <!-- Gói lớn -->
-      <div style="margin-top:16px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:16px;padding:24px;">
-        <div style="font-size:13px;font-weight:700;color:var(--gray-500);margin-bottom:16px;text-transform:uppercase;letter-spacing:0.06em;">Gói khối lượng lớn</div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
-          <div style="text-align:center;"><div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;">10.000 HĐ</div><div style="font-size:18px;font-weight:800;color:var(--indigo);">1.139.000đ</div></div>
-          <div style="text-align:center;"><div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;">20.000 HĐ</div><div style="font-size:18px;font-weight:800;color:var(--indigo);">1.639.000đ</div></div>
-          <div style="text-align:center;"><div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;">50.000 HĐ</div><div style="font-size:18px;font-weight:800;color:var(--indigo);">3.979.000đ</div></div>
-          <div style="text-align:center;"><div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;">100.000 HĐ</div><div style="font-size:18px;font-weight:800;color:var(--indigo);">5.868.000đ</div></div>
-        </div>
-        <div style="margin-top:16px;text-align:center;">
-          <a href="https://autopostvn.cloud" target="_blank" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;font-size:14px;padding:10px 24px;">Chọn gói khối lượng →</a>
-        </div>
-      </div>
-      <div style="margin-top:16px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:14px 18px;font-size:13px;color:#92400E;">
-        ⚠️ <strong>Lưu ý:</strong> Báo giá có hiệu lực từ 01/04/2026 — hết hiệu lực 30/06/2026 (sẽ cập nhật khi hết). Khách hàng có thể mua trước nhiều gói, số HĐ chưa dùng hết chuyển sang năm tiếp theo.
-        <a href="baogia.pdf" download style="color:#4338CA;font-weight:600;margin-left:8px;">Tải PDF chi tiết ↓</a>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#EEF2FF"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#4338CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Tất cả tính năng Pro</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#EEF2FF"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#4338CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Không giới hạn pháp nhân</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#EEF2FF"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#4338CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Tích hợp ERP / MISA</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#EEF2FF"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#4338CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>API riêng + Webhook</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#EEF2FF"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#4338CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Dedicated support 24/7</li>
+          <li class="price-feat"><svg class="check-icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="9" fill="#EEF2FF"/><path d="M5.5 9l2.5 2.5 4.5-4.5" stroke="#4338CA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>SLA 99.9% uptime</li>
+        </ul>
+        <button class="btn-outline" onclick="document.getElementById('cta-form').scrollIntoView({behavior:'smooth'})">Liên hệ tư vấn</button>
       </div>
     </div>
   </div>
 </section>
-<!-- TESTIMONIALS -->
 
 <!-- TESTIMONIALS -->
 <section id="testimonials" class="section" style="background: var(--gray-50);">
@@ -1116,7 +1079,7 @@
         <div style="margin-top:12px;font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7;">
           <div>📍 Hồ Chí Minh, Việt Nam</div>
           <div>📞 <a href="tel:0987939605" style="color:rgba(255,255,255,0.4);">0987 939 605</a></div>
-          <div>✉️ <a href="/cdn-cgi/l/email-protection#b2c1c7c2c2ddc0c6f2d3c7c6ddc2ddc1c6c4dc9cd1deddc7d6" style="color:rgba(255,255,255,0.4);"><span class="__cf_email__" data-cfemail="f88b8d8888978a8cb8998d8c9788978b8c8e96d69b94978d9c">[email&#160;protected]</span></a></div>
+          <div>✉️ <a href="/cdn-cgi/l/email-protection#a5cdc0c9c9cae5cccbd3cacbc08bd3cb" style="color:rgba(255,255,255,0.4);"><span class="__cf_email__" data-cfemail="c5ada0a9a9aa85acabb3aaaba0ebb3ab">[email&#160;protected]</span></a></div>
         </div>
         <div class="footer-social">
           <div class="social-btn">f</div>
@@ -1150,7 +1113,7 @@
         <div class="footer-links">
           <a href="#" class="footer-link">Về chúng tôi</a>
           <a href="https://autopostvn.cloud" target="_blank" class="footer-link" style="color:#34D399;font-weight:600;">→ Vào App INVONE</a>
-          <a href="/cdn-cgi/l/email-protection#1f6c6a6f6f706d6b5f7e6a6b706f706c6b6971317c73706a7b" class="footer-link"><span class="__cf_email__" data-cfemail="cab9bfbabaa5b8be8aabbfbea5baa5b9bebca4e4a9a6a5bfae">[email&#160;protected]</span></a>
+          <a href="/cdn-cgi/l/email-protection#c6aea3aaaaa986afa8b0a9a8a3e8b0a8" class="footer-link"><span class="__cf_email__" data-cfemail="2b434e4747446b42455d44454e055d45">[email&#160;protected]</span></a>
           <a href="tel:0987939605" class="footer-link">0987 939 605</a>
         </div>
       </div>
@@ -1158,7 +1121,7 @@
     <div class="footer-bottom">
       <div>
         <div class="footer-copy">© 2026 CÔNG TY TNHH AUTOPOST VN — MST: 0319267826</div>
-        <div style="font-size:12px;color:rgba(255,255,255,0.2);margin-top:4px;">Sản phẩm: INVONE by AUTOPOST VN</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.2);margin-top:4px;">Sản phẩm: INVONE · invone.vn</div>
       </div>
       <div class="footer-legal">
         <a href="dieu-khoan.html" class="footer-legal-link">Điều khoản sử dụng</a>
@@ -1243,62 +1206,16 @@ function FAQSection() {
 
 // Lead Form Component
 function LeadForm() {
-  const [form, setForm] = React.useState({ name:'', phone:'', email:'', company:'', type:'SME (Doanh nghiệp vừa & nhỏ)', interest:'' });
+  const [form, setForm] = React.useState({ name:'', phone:'', email:'', company:'', type:'SME', interest:'' });
   const [submitted, setSubmitted] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState('');
-
-  const RESEND_KEY = 're_j4vyQKeY_KSEbM32amcu9T8BbrSVUzobC';
-  const TG_TOKEN  = '8623375977:AAFHvDEtsYoH-OjR-g24cGeKuRp1DVWtn-c';
-  const TG_CHAT   = '8329180268';
 
   const handle = e => setForm({...form, [e.target.name]: e.target.value});
-
-  const sendEmail = async (data) => {
-    try {
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: 'INVONE <support@autopostvn.cloud>',
-          to: ['support@autopostvn.cloud'],
-          subject: `📩 Đăng ký mới từ ${data.name} — ${data.type}`,
-          html: `<h2>Khách hàng mới đăng ký INVONE</h2>
-            <p><b>Họ tên:</b> ${data.name}</p>
-            <p><b>Số điện thoại:</b> ${data.phone}</p>
-            <p><b>Email:</b> ${data.email || 'Chưa cung cấp'}</p>
-            <p><b>Loại hình:</b> ${data.type}</p>
-            <p><b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}</p>`
-        })
-      });
-    } catch(e) { console.warn('Resend error:', e); }
-  };
-
-  const sendTelegram = async (data) => {
-    if(TG_CHAT === 'TELEGRAM_CHAT_ID') return;
-    try {
-      const msg = `📩 *Đăng ký mới INVONE*\n\n` +
-        `👤 *Họ tên:* ${data.name}\n` +
-        `📞 *SĐT:* ${data.phone}\n` +
-        `✉️ *Email:* ${data.email || '—'}\n` +
-        `🏢 *Loại hình:* ${data.type}\n` +
-        `⏰ *Thời gian:* ${new Date().toLocaleString('vi-VN')}`;
-      await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: TG_CHAT, text: msg, parse_mode: 'Markdown' })
-      });
-    } catch(e) { console.warn('Telegram error:', e); }
-  };
-
-  const submit = async (e) => {
+  const submit = e => {
     e.preventDefault();
-    setError('');
-    if(!form.phone || !form.name) { setError('Vui lòng nhập họ tên và số điện thoại.'); return; }
+    if(!form.phone || !form.name) return;
     setLoading(true);
-    await Promise.all([sendEmail(form), sendTelegram(form)]);
-    setLoading(false);
-    setSubmitted(true);
+    setTimeout(() => { setLoading(false); setSubmitted(true); }, 1200);
   };
 
   if(submitted) return (
@@ -1315,7 +1232,6 @@ function LeadForm() {
     <form className="lead-form" onSubmit={submit}>
       <div className="lead-form-title">Đăng ký dùng thử miễn phí</div>
       <div className="lead-form-sub">Đội ngũ sẽ liên hệ trong vòng 24 giờ</div>
-      {error && <div style={{background:'#FEF2F2',border:'1px solid #FECACA',color:'#B91C1C',borderRadius:'8px',padding:'10px 14px',fontSize:'13px',marginBottom:'12px'}}>{error}</div>}
       <div className="form-group">
         <label className="form-label">Họ và tên *</label>
         <input className="form-input" name="name" placeholder="Nguyễn Văn A" value={form.name} onChange={handle} required/>
@@ -1365,8 +1281,15 @@ window.addEventListener('scroll', () => {
   else nav.classList.remove('scrolled');
 });
 
-// Billing toggle removed (pricing now per-package)
-function toggleBilling() {}
+// Billing toggle
+let isYearly = false;
+function toggleBilling() {
+  isYearly = !isYearly;
+  const knob = document.getElementById('toggle-knob');
+  knob.style.left = isYearly ? '23px' : '3px';
+  document.getElementById('price-starter').textContent = isYearly ? '159k' : '199k';
+  document.getElementById('price-pro').textContent = isYearly ? '399k' : '499k';
+}
 
 // Hero form
 function handleHeroSubmit() {
