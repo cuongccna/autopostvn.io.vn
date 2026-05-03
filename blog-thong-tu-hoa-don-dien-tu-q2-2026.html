@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thông tư mới về hóa đơn điện tử áp dụng từ Q2/2026 — AUTOBOT Blog</title>
+<meta name="description" content="Tổng hợp các quy định mới nhất về hóa đơn điện tử theo thông tư áp dụng từ Quý 2/2026 — những điều doanh nghiệp cần nắm rõ để tránh vi phạm.">
+<link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+<link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #0f1425;
+    --card: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --text: rgba(255,255,255,0.85);
+    --sub: rgba(255,255,255,0.5);
+    --accent: #6366F1;
+    --accent2: #818CF8;
+    --green: #34D399;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.7; }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* NAV */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(10,14,26,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+  .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark img { width: 32px; height: 32px; border-radius: 8px; }
+  .logo-name { font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-back { color: var(--sub); font-size: 14px; }
+  .nav-app-btn { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: var(--accent2); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; }
+  .nav-app-btn:hover { background: rgba(99,102,241,0.25); text-decoration: none; }
+
+  /* HERO BLOG */
+  .blog-hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  .blog-cat-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.25); color: var(--accent2); font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .blog-hero-title { font-size: 36px; font-weight: 800; line-height: 1.2; letter-spacing: -1px; color: #fff; margin-bottom: 16px; max-width: 720px; }
+  .blog-meta { display: flex; align-items: center; gap: 16px; color: var(--sub); font-size: 14px; flex-wrap: wrap; }
+  .blog-meta-sep { color: var(--border); }
+
+  /* LAYOUT */
+  .blog-layout { display: grid; grid-template-columns: 1fr 320px; gap: 48px; padding: 48px 0 80px; align-items: start; }
+  @media (max-width: 768px) { .blog-layout { grid-template-columns: 1fr; } .blog-hero-title { font-size: 26px; } }
+
+  /* THUMBNAIL */
+  .blog-thumb { width: 100%; border-radius: 16px; overflow: hidden; margin-bottom: 40px; border: 1px solid var(--border); }
+  .blog-thumb img { width: 100%; height: auto; display: block; }
+
+  /* ARTICLE */
+  .article h2 { font-size: 22px; font-weight: 700; color: #fff; margin: 36px 0 12px; letter-spacing: -0.5px; }
+  .article h3 { font-size: 17px; font-weight: 600; color: var(--accent2); margin: 24px 0 10px; }
+  .article p { color: var(--text); margin-bottom: 16px; font-size: 15px; line-height: 1.8; }
+  .article ul, .article ol { padding-left: 24px; margin-bottom: 16px; }
+  .article li { color: var(--text); font-size: 15px; line-height: 1.8; margin-bottom: 6px; }
+  .article strong { color: #fff; }
+  .article .highlight-box { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); border-left: 3px solid var(--accent); border-radius: 8px; padding: 16px 20px; margin: 24px 0; }
+  .article .highlight-box p { margin-bottom: 0; color: rgba(255,255,255,0.75); font-size: 14px; }
+  .article .warning-box { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); border-left: 3px solid #FBBF24; border-radius: 8px; padding: 16px 20px; margin: 24px 0; }
+  .article .warning-box p { margin-bottom: 0; color: rgba(255,255,255,0.75); font-size: 14px; }
+  .article table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+  .article th { background: rgba(99,102,241,0.15); color: var(--accent2); font-weight: 600; text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+  .article td { padding: 10px 14px; border: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .article tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* SIDEBAR */
+  .sidebar { position: sticky; top: 80px; }
+  .sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+  .sidebar-card-title { font-size: 13px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+  .cta-box { background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(129,140,248,0.1)); border: 1px solid rgba(99,102,241,0.3); border-radius: 16px; padding: 24px; margin-bottom: 24px; text-align: center; }
+  .cta-box-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .cta-box-sub { font-size: 13px; color: var(--sub); margin-bottom: 20px; line-height: 1.5; }
+  .btn-cta { display: block; background: var(--accent); color: #fff; font-size: 14px; font-weight: 700; padding: 12px 20px; border-radius: 10px; text-align: center; text-decoration: none; transition: opacity 0.2s; }
+  .btn-cta:hover { opacity: 0.85; text-decoration: none; }
+  .contact-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .contact-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .contact-item a { color: var(--accent2); }
+
+  /* RELATED */
+  .related-post { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .related-post:last-child { border-bottom: none; padding-bottom: 0; }
+  .related-post-cat { font-size: 11px; color: var(--accent2); font-weight: 600; margin-bottom: 4px; }
+  .related-post-title { font-size: 13px; color: var(--text); line-height: 1.4; }
+  .related-post-title a { color: var(--text); }
+  .related-post-title a:hover { color: var(--accent2); text-decoration: none; }
+
+  /* FOOTER */
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 40px 0 24px; }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 24px; border-top: 1px solid var(--border); margin-top: 24px; }
+  .footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
+  .footer-legal { display: flex; gap: 16px; flex-wrap: wrap; }
+  .footer-legal a { font-size: 12px; color: rgba(255,255,255,0.25); }
+  .footer-legal a:hover { color: rgba(255,255,255,0.5); text-decoration: none; }
+  .footer-brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .footer-desc { font-size: 13px; color: rgba(255,255,255,0.35); line-height: 1.6; max-width: 380px; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="Landing Page.html" class="logo">
+      <div class="logo-mark"><img src="/icons/icon-192x192.png" alt="AUTOBOT Logo"></div>
+      <span class="logo-name">AUTOBOT</span>
+    </a>
+    <div class="nav-right">
+      <a href="Landing Page.html#blog" class="nav-back">← Về trang chủ</a>
+      <a href="https://autopostvn.cloud" target="_blank" class="nav-app-btn">Vào App →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- BLOG HERO -->
+<div class="blog-hero">
+  <div class="container">
+    <div class="blog-cat-tag">Chính sách thuế</div>
+    <h1 class="blog-hero-title">Thông tư mới về hóa đơn điện tử áp dụng từ Q2/2026</h1>
+    <div class="blog-meta">
+      <span>📅 15 tháng 4, 2026</span>
+      <span class="blog-meta-sep">·</span>
+      <span>✍️ AUTOBOT Editorial</span>
+      <span class="blog-meta-sep">·</span>
+      <span>⏱ 5 phút đọc</span>
+    </div>
+  </div>
+</div>
+
+<!-- BLOG BODY -->
+<div class="container">
+  <div class="blog-layout">
+    <!-- ARTICLE -->
+    <main>
+      <div class="blog-thumb">
+        <img src="images/blog-gtgt.png" alt="Thông tư mới về hóa đơn điện tử 2026">
+      </div>
+
+      <article class="article">
+
+        <div class="highlight-box">
+          <p>⚡ <strong>Tóm tắt nhanh:</strong> Từ Q2/2026, các doanh nghiệp phải áp dụng định dạng hóa đơn điện tử mới theo thông tư cập nhật, bao gồm bổ sung trường thông tin bắt buộc và thay đổi quy trình xác thực với cơ quan thuế.</p>
+        </div>
+
+        <h2>1. Bối cảnh ban hành thông tư mới</h2>
+        <p>Bộ Tài chính đã ban hành thông tư hướng dẫn bổ sung về hóa đơn điện tử, có hiệu lực áp dụng từ đầu Quý 2/2026. Đây là bước tiếp theo trong lộ trình số hóa hệ thống thuế của Tổng cục Thuế (GDT), nhằm đồng bộ hóa dữ liệu giữa doanh nghiệp và cơ quan quản lý nhà nước.</p>
+        <p>Thông tư mới ra đời trong bối cảnh một số lượng lớn doanh nghiệp vẫn còn sử dụng hóa đơn điện tử theo mẫu cũ (ban hành từ Nghị định 123/2020/NĐ-CP) mà chưa cập nhật đầy đủ các trường thông tin theo yêu cầu mới.</p>
+
+        <h2>2. Những thay đổi chính so với quy định cũ</h2>
+
+        <h3>2.1 Bổ sung trường thông tin bắt buộc</h3>
+        <p>Theo thông tư mới, hóa đơn điện tử phải bổ sung thêm một số trường thông tin bắt buộc:</p>
+        <ul>
+          <li><strong>Mã số định danh hàng hóa/dịch vụ</strong> theo danh mục chuẩn của Tổng cục Thống kê</li>
+          <li><strong>Mã QR xác thực</strong> tích hợp trực tiếp trên hóa đơn để người mua có thể kiểm tra tính hợp lệ</li>
+          <li><strong>Thông tin đơn vị đo lường</strong> chuẩn hóa theo quy định mới</li>
+          <li><strong>Trạng thái hóa đơn</strong> (gốc / điều chỉnh / thay thế / hủy) phải thể hiện rõ trên mặt hóa đơn</li>
+        </ul>
+
+        <h3>2.2 Thay đổi quy trình gửi dữ liệu lên GDT</h3>
+        <p>Trước đây, doanh nghiệp có thể gửi dữ liệu hóa đơn lên cổng GDT theo lô (batch) với chu kỳ tổng hợp. Từ Q2/2026, quy định mới yêu cầu:</p>
+        <ul>
+          <li>Dữ liệu hóa đơn phải được truyền lên GDT trong vòng <strong>72 giờ</strong> kể từ thời điểm phát sinh</li>
+          <li>Hóa đơn có giá trị từ <strong>200 triệu đồng trở lên</strong> phải được xác thực theo thời gian thực (real-time)</li>
+          <li>Cổng kết nối API với GDT được nâng cấp lên phiên bản 2.0, không còn hỗ trợ API cũ</li>
+        </ul>
+
+        <div class="warning-box">
+          <p>⚠️ <strong>Lưu ý quan trọng:</strong> Nếu doanh nghiệp tiếp tục sử dụng phần mềm cũ không tương thích với API GDT phiên bản 2.0, hóa đơn phát hành sẽ không được xác nhận hợp lệ và có thể bị từ chối hoàn thuế.</p>
+        </div>
+
+        <h2>3. Lộ trình áp dụng cụ thể</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Giai đoạn</th>
+              <th>Thời điểm</th>
+              <th>Đối tượng</th>
+              <th>Yêu cầu</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Giai đoạn 1</td>
+              <td>01/04/2026</td>
+              <td>Doanh nghiệp lớn (doanh thu &gt; 50 tỷ/năm)</td>
+              <td>Bắt buộc áp dụng đầy đủ</td>
+            </tr>
+            <tr>
+              <td>Giai đoạn 2</td>
+              <td>01/07/2026</td>
+              <td>Doanh nghiệp vừa và nhỏ (SME)</td>
+              <td>Bắt buộc áp dụng đầy đủ</td>
+            </tr>
+            <tr>
+              <td>Giai đoạn 3</td>
+              <td>01/10/2026</td>
+              <td>Hộ kinh doanh có sử dụng HĐĐT</td>
+              <td>Bắt buộc áp dụng</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>4. Mức phạt vi phạm</h2>
+        <p>Theo quy định tại Nghị định xử phạt vi phạm hành chính trong lĩnh vực thuế, doanh nghiệp không tuân thủ đúng quy định về hóa đơn điện tử mới có thể bị phạt:</p>
+        <ul>
+          <li>Phạt cảnh cáo hoặc phạt tiền từ <strong>2.000.000 đến 5.000.000 đồng</strong> đối với lỗi kỹ thuật nhỏ</li>
+          <li>Phạt tiền từ <strong>10.000.000 đến 20.000.000 đồng</strong> đối với hành vi phát hành hóa đơn không đúng quy định</li>
+          <li>Bị <strong>đình chỉ quyền sử dụng hóa đơn điện tử</strong> trong trường hợp tái phạm</li>
+        </ul>
+
+        <h2>5. Doanh nghiệp cần chuẩn bị gì?</h2>
+        <p>Để tuân thủ đúng thông tư mới, doanh nghiệp cần thực hiện các bước sau:</p>
+        <ol>
+          <li><strong>Kiểm tra phiên bản phần mềm kế toán</strong> hiện tại có hỗ trợ API GDT 2.0 chưa</li>
+          <li><strong>Cập nhật mẫu hóa đơn</strong> để bổ sung các trường thông tin bắt buộc mới</li>
+          <li><strong>Đăng ký kết nối lại</strong> với cổng GDT theo API mới (nếu chưa thực hiện)</li>
+          <li><strong>Đào tạo nhân viên kế toán</strong> về quy trình mới, đặc biệt là cách xử lý hóa đơn điều chỉnh/thay thế</li>
+          <li><strong>Lưu trữ dữ liệu hóa đơn</strong> đầy đủ theo thời hạn tối thiểu 10 năm theo quy định</li>
+        </ol>
+
+        <div class="highlight-box">
+          <p>💡 <strong>AUTOBOT hỗ trợ bạn:</strong> Hệ thống AUTOBOT đã được cập nhật tương thích hoàn toàn với API GDT 2.0 và tự động bổ sung các trường thông tin theo thông tư mới. Doanh nghiệp sử dụng AUTOBOT không cần làm gì thêm — hệ thống tự động xử lý toàn bộ.</p>
+        </div>
+
+        <h2>6. Câu hỏi thường gặp</h2>
+
+        <h3>Hóa đơn đã phát hành theo mẫu cũ có cần điều chỉnh lại không?</h3>
+        <p>Không. Hóa đơn đã phát hành hợp lệ trước ngày thông tư có hiệu lực vẫn được chấp nhận. Chỉ các hóa đơn phát hành từ ngày áp dụng trở đi mới phải tuân theo mẫu mới.</p>
+
+        <h3>Doanh nghiệp đang dùng hóa đơn giấy thì sao?</h3>
+        <p>Doanh nghiệp đang sử dụng hóa đơn giấy theo lộ trình chuyển đổi cũ vẫn tiếp tục được sử dụng đến hết hạn đã được cơ quan thuế chấp thuận. Tuy nhiên, nên chủ động chuyển sang hóa đơn điện tử sớm.</p>
+
+        <h3>Hộ kinh doanh nhỏ có cần áp dụng không?</h3>
+        <p>Hộ kinh doanh sử dụng hóa đơn điện tử sẽ áp dụng từ Giai đoạn 3 (01/10/2026). Hộ kinh doanh nộp thuế khoán và không phát hành hóa đơn điện tử không bị ảnh hưởng trực tiếp.</p>
+
+      </article>
+    </main>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="cta-box">
+        <div class="cta-box-title">Tự động hóa hóa đơn<br>với AUTOBOT</div>
+        <div class="cta-box-sub">Đồng bộ GDT, tạo tờ khai GTGT/TNCN 1 click — tuân thủ 100% quy định mới.</div>
+        <a href="https://autopostvn.cloud" target="_blank" class="btn-cta">Dùng thử miễn phí →</a>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Liên hệ hỗ trợ</div>
+        <div class="contact-item">📞 <a href="tel:0889887988">Tư vấn 1: 088 988 7988</a></div>
+        <div class="contact-item">📞 <a href="tel:0971339239">Tư vấn 2: 0971 339 239</a></div>
+        <div class="contact-item">💬 <a href="https://zalo.me/1862014164765694405" target="_blank">Nhắn Zalo OA</a></div>
+        <div class="contact-item">✈️ <a href="https://t.me/autopostvn_bot" target="_blank">@autopostvn_bot</a></div>
+        <div class="contact-item">✉️ <a href="mailto:support@autopostvn.cloud">support@autopostvn.cloud</a></div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Bài viết liên quan</div>
+        <div class="related-post">
+          <div>
+            <div class="related-post-cat">Hướng dẫn</div>
+            <div class="related-post-title"><a href="blog-quyet-toan-thue-tncn-2025.html">Quyết toán thuế TNCN 2025 — Những điểm cần lưu ý</a></div>
+          </div>
+        </div>
+        <div class="related-post">
+          <div>
+            <div class="related-post-cat">Hộ kinh doanh</div>
+            <div class="related-post-title"><a href="blog-ho-kinh-doanh-nop-thue-khoan.html">Hộ kinh doanh nộp thuế khoán — Hướng dẫn từ A đến Z</a></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-brand-row">
+      <img src="/icons/icon-192x192.png" alt="AUTOBOT" style="width:28px;height:28px;border-radius:6px;">
+      <span style="font-size:16px;font-weight:800;color:#fff;">AUTOBOT</span>
+    </div>
+    <div class="footer-desc">Nền tảng quản lý hóa đơn và khai thuế tự động dành cho doanh nghiệp Việt Nam.</div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 CÔNG TY TNHH AUTOPOST VN — MST: 0319267826</div>
+      <div class="footer-legal">
+        <a href="dieu-khoan.html">Điều khoản</a>
+        <a href="bao-mat.html">Bảo mật</a>
+        <a href="cookie.html">Cookie</a>
+        <a href="Landing Page.html#blog">← Blog</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

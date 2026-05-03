@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hộ kinh doanh nộp thuế khoán — Hướng dẫn từ A đến Z | AUTOBOT Blog</title>
+<meta name="description" content="Hướng dẫn đầy đủ cho hộ kinh doanh cá thể về cách tính thuế khoán, khai thuế GTGT và TNCN theo phương pháp trực tiếp, thủ tục đăng ký và thay đổi mức thuế.">
+<link rel="icon" type="image/x-icon" href="/icons/favicon.ico">
+<link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0a0e1a; --bg2: #0f1425; --card: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08); --text: rgba(255,255,255,0.85);
+    --sub: rgba(255,255,255,0.5); --accent: #6366F1; --accent2: #818CF8;
+    --orange: #FB923C; --green: #34D399;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.7; }
+  a { color: var(--accent2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(10,14,26,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); }
+  .nav-inner { max-width: 1080px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark img { width: 32px; height: 32px; border-radius: 8px; }
+  .logo-name { font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+  .nav-back { color: var(--sub); font-size: 14px; }
+  .nav-app-btn { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: var(--accent2); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 8px; }
+  .nav-app-btn:hover { background: rgba(99,102,241,0.25); text-decoration: none; }
+  .blog-hero { padding: 64px 0 48px; border-bottom: 1px solid var(--border); }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  .blog-cat-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(251,146,60,0.12); border: 1px solid rgba(251,146,60,0.25); color: var(--orange); font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .blog-hero-title { font-size: 36px; font-weight: 800; line-height: 1.2; letter-spacing: -1px; color: #fff; margin-bottom: 16px; max-width: 720px; }
+  .blog-meta { display: flex; align-items: center; gap: 16px; color: var(--sub); font-size: 14px; flex-wrap: wrap; }
+  .blog-meta-sep { color: var(--border); }
+  .blog-layout { display: grid; grid-template-columns: 1fr 320px; gap: 48px; padding: 48px 0 80px; align-items: start; }
+  @media (max-width: 768px) { .blog-layout { grid-template-columns: 1fr; } .blog-hero-title { font-size: 26px; } }
+  .blog-thumb { width: 100%; border-radius: 16px; overflow: hidden; margin-bottom: 40px; border: 1px solid var(--border); }
+  .blog-thumb img { width: 100%; height: auto; display: block; }
+  .article h2 { font-size: 22px; font-weight: 700; color: #fff; margin: 36px 0 12px; letter-spacing: -0.5px; }
+  .article h3 { font-size: 17px; font-weight: 600; color: var(--accent2); margin: 24px 0 10px; }
+  .article p { color: var(--text); margin-bottom: 16px; font-size: 15px; line-height: 1.8; }
+  .article ul, .article ol { padding-left: 24px; margin-bottom: 16px; }
+  .article li { color: var(--text); font-size: 15px; line-height: 1.8; margin-bottom: 6px; }
+  .article strong { color: #fff; }
+  .article .highlight-box { background: rgba(251,146,60,0.07); border: 1px solid rgba(251,146,60,0.2); border-left: 3px solid var(--orange); border-radius: 8px; padding: 16px 20px; margin: 24px 0; }
+  .article .highlight-box p { margin-bottom: 0; color: rgba(255,255,255,0.75); font-size: 14px; }
+  .article .info-box { background: rgba(99,102,241,0.07); border: 1px solid rgba(99,102,241,0.2); border-left: 3px solid var(--accent); border-radius: 8px; padding: 16px 20px; margin: 24px 0; }
+  .article .info-box p { margin-bottom: 0; color: rgba(255,255,255,0.75); font-size: 14px; }
+  .article .warning-box { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); border-left: 3px solid #FBBF24; border-radius: 8px; padding: 16px 20px; margin: 24px 0; }
+  .article .warning-box p { margin-bottom: 0; color: rgba(255,255,255,0.75); font-size: 14px; }
+  .article table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+  .article th { background: rgba(251,146,60,0.1); color: var(--orange); font-weight: 600; text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+  .article td { padding: 10px 14px; border: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .article tr:hover td { background: rgba(255,255,255,0.02); }
+  .sidebar { position: sticky; top: 80px; }
+  .sidebar-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+  .sidebar-card-title { font-size: 13px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+  .cta-box { background: linear-gradient(135deg, rgba(251,146,60,0.15), rgba(99,102,241,0.1)); border: 1px solid rgba(251,146,60,0.25); border-radius: 16px; padding: 24px; margin-bottom: 24px; text-align: center; }
+  .cta-box-title { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .cta-box-sub { font-size: 13px; color: var(--sub); margin-bottom: 20px; line-height: 1.5; }
+  .btn-cta { display: block; background: var(--accent); color: #fff; font-size: 14px; font-weight: 700; padding: 12px 20px; border-radius: 10px; text-align: center; text-decoration: none; transition: opacity 0.2s; }
+  .btn-cta:hover { opacity: 0.85; text-decoration: none; }
+  .contact-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .contact-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .contact-item a { color: var(--accent2); }
+  .related-post { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .related-post:last-child { border-bottom: none; padding-bottom: 0; }
+  .related-post-cat { font-size: 11px; color: var(--accent2); font-weight: 600; margin-bottom: 4px; }
+  .related-post-title { font-size: 13px; color: var(--text); line-height: 1.4; }
+  .related-post-title a { color: var(--text); }
+  .related-post-title a:hover { color: var(--accent2); text-decoration: none; }
+  footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 40px 0 24px; }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding-top: 24px; border-top: 1px solid var(--border); margin-top: 24px; }
+  .footer-copy { font-size: 12px; color: rgba(255,255,255,0.25); }
+  .footer-legal { display: flex; gap: 16px; flex-wrap: wrap; }
+  .footer-legal a { font-size: 12px; color: rgba(255,255,255,0.25); }
+  .footer-legal a:hover { color: rgba(255,255,255,0.5); text-decoration: none; }
+  .footer-brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .footer-desc { font-size: 13px; color: rgba(255,255,255,0.35); line-height: 1.6; max-width: 380px; }
+  .steps { counter-reset: step; list-style: none; padding: 0; }
+  .steps li { counter-increment: step; padding: 14px 14px 14px 52px; position: relative; margin-bottom: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; font-size: 15px; color: var(--text); }
+  .steps li::before { content: counter(step); position: absolute; left: 14px; top: 14px; width: 26px; height: 26px; background: var(--orange); color: #fff; font-size: 13px; font-weight: 700; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .toc { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin-bottom: 32px; }
+  .toc-title { font-size: 13px; font-weight: 700; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+  .toc ul { list-style: none; padding: 0; }
+  .toc li { padding: 4px 0; font-size: 14px; }
+  .toc a { color: var(--accent2); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="Landing Page.html" class="logo">
+      <div class="logo-mark"><img src="/icons/icon-192x192.png" alt="AUTOBOT Logo"></div>
+      <span class="logo-name">AUTOBOT</span>
+    </a>
+    <div class="nav-right">
+      <a href="Landing Page.html#blog" class="nav-back">← Về trang chủ</a>
+      <a href="https://autopostvn.cloud" target="_blank" class="nav-app-btn">Vào App →</a>
+    </div>
+  </div>
+</nav>
+
+<div class="blog-hero">
+  <div class="container">
+    <div class="blog-cat-tag">Hộ kinh doanh</div>
+    <h1 class="blog-hero-title">Hộ kinh doanh nộp thuế khoán — Hướng dẫn từ A đến Z</h1>
+    <div class="blog-meta">
+      <span>📅 5 tháng 4, 2026</span>
+      <span class="blog-meta-sep">·</span>
+      <span>✍️ AUTOBOT Editorial</span>
+      <span class="blog-meta-sep">·</span>
+      <span>⏱ 7 phút đọc</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="blog-layout">
+    <main>
+      <div class="blog-thumb">
+        <img src="images/blog-hkd.png" alt="Hộ kinh doanh nộp thuế khoán">
+      </div>
+
+      <article class="article">
+
+        <div class="toc">
+          <div class="toc-title">Nội dung bài viết</div>
+          <ul>
+            <li>1. Thuế khoán là gì?</li>
+            <li>2. Ai thuộc diện nộp thuế khoán?</li>
+            <li>3. Cách tính mức thuế khoán</li>
+            <li>4. Thủ tục đăng ký và kê khai</li>
+            <li>5. Thời hạn và cách nộp tiền thuế</li>
+            <li>6. Thay đổi doanh thu — điều chỉnh mức thuế</li>
+            <li>7. Câu hỏi thường gặp</li>
+          </ul>
+        </div>
+
+        <div class="highlight-box">
+          <p>🏪 <strong>Dành cho:</strong> Hộ kinh doanh cá thể, cá nhân kinh doanh nộp thuế theo phương pháp khoán (không theo phương pháp kê khai thực tế). Nếu bạn không chắc mình thuộc nhóm nào, hãy liên hệ cơ quan thuế địa phương hoặc <a href="https://zalo.me/1862014164765694405" target="_blank" style="color:#FB923C;">nhắn Zalo cho AUTOBOT</a>.</p>
+        </div>
+
+        <h2>1. Thuế khoán là gì?</h2>
+        <p>Thuế khoán (hay còn gọi là <strong>phương pháp nộp thuế theo doanh thu khoán</strong>) là phương thức tính thuế đơn giản dành cho hộ kinh doanh nhỏ. Thay vì phải theo dõi từng hóa đơn, chứng từ như doanh nghiệp lớn, hộ kinh doanh chỉ cần nộp một khoản thuế cố định hàng tháng/quý dựa trên mức doanh thu được cơ quan thuế ấn định.</p>
+        <p>Thuế khoán gồm hai loại thuế được tính gộp:</p>
+        <ul>
+          <li><strong>Thuế GTGT</strong> (Giá trị gia tăng) theo tỷ lệ % trên doanh thu</li>
+          <li><strong>Thuế TNCN</strong> (Thu nhập cá nhân) theo tỷ lệ % trên doanh thu</li>
+        </ul>
+
+        <h2>2. Ai thuộc diện nộp thuế khoán?</h2>
+        <p>Hộ kinh doanh <strong>được áp dụng nộp thuế khoán</strong> nếu đáp ứng đồng thời:</p>
+        <ul>
+          <li>Là hộ kinh doanh cá thể (không phải doanh nghiệp)</li>
+          <li>Doanh thu hàng năm <strong>dưới 100 triệu đồng</strong> (miễn thuế toàn bộ) hoặc từ 100 triệu đồng trở lên nhưng chọn phương pháp khoán</li>
+          <li>Không thuộc các ngành nghề bắt buộc kê khai theo phương pháp thực tế</li>
+        </ul>
+
+        <div class="info-box">
+          <p>ℹ️ <strong>Lưu ý:</strong> Hộ kinh doanh có doanh thu dưới <strong>100 triệu đồng/năm</strong> được miễn toàn bộ thuế GTGT và TNCN. Chỉ khi vượt ngưỡng này mới phải nộp thuế khoán.</p>
+        </div>
+
+        <h2>3. Cách tính mức thuế khoán</h2>
+        <p>Mức thuế khoán được tính theo công thức:</p>
+        <div class="highlight-box">
+          <p><strong>Thuế GTGT phải nộp = Doanh thu khoán × Tỷ lệ thuế GTGT</strong><br>
+          <strong>Thuế TNCN phải nộp = Doanh thu khoán × Tỷ lệ thuế TNCN</strong></p>
+        </div>
+
+        <p>Tỷ lệ thuế áp dụng theo từng ngành nghề:</p>
+        <table>
+          <thead>
+            <tr><th>Ngành nghề</th><th>Tỷ lệ GTGT</th><th>Tỷ lệ TNCN</th><th>Tổng cộng</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Phân phối, cung cấp hàng hóa</td><td>1%</td><td>0,5%</td><td>1,5%</td></tr>
+            <tr><td>Dịch vụ, xây dựng không bao thầu NVL</td><td>5%</td><td>2%</td><td>7%</td></tr>
+            <tr><td>Sản xuất, vận tải, dịch vụ có gắn hàng hóa</td><td>3%</td><td>1,5%</td><td>4,5%</td></tr>
+            <tr><td>Hoạt động kinh doanh khác</td><td>2%</td><td>1%</td><td>3%</td></tr>
+          </tbody>
+        </table>
+
+        <p><strong>Ví dụ thực tế:</strong> Chị A kinh doanh quán ăn (dịch vụ), doanh thu khoán cơ quan thuế ấn định là 15.000.000 đồng/tháng. Thuế phải nộp hàng tháng:</p>
+        <ul>
+          <li>Thuế GTGT: 15.000.000 × 5% = <strong>750.000 đồng</strong></li>
+          <li>Thuế TNCN: 15.000.000 × 2% = <strong>300.000 đồng</strong></li>
+          <li><strong>Tổng cộng: 1.050.000 đồng/tháng</strong></li>
+        </ul>
+
+        <h2>4. Thủ tục đăng ký và kê khai lần đầu</h2>
+        <ol class="steps">
+          <li><strong>Đăng ký kinh doanh</strong> tại UBND phường/xã nơi hộ kinh doanh đặt địa điểm (nếu chưa có Giấy phép kinh doanh)</li>
+          <li><strong>Đăng ký mã số thuế</strong> tại Chi cục Thuế địa phương hoặc qua cổng thông tin thuế điện tử — nhận MST cá nhân kinh doanh</li>
+          <li><strong>Khai thuế lần đầu</strong>: nộp Tờ khai thuế khoán (Mẫu 01/CNKD) đến Chi cục Thuế trong vòng 10 ngày kể từ ngày bắt đầu hoạt động</li>
+          <li><strong>Cơ quan thuế xác định doanh thu khoán</strong> và thông báo mức thuế khoán cho từng năm qua Thông báo nộp thuế (Mẫu 01/TB-CNKD)</li>
+          <li><strong>Nộp thuế theo thông báo</strong> — mỗi tháng hoặc mỗi quý tùy quy định của cơ quan thuế địa phương</li>
+        </ol>
+
+        <h2>5. Thời hạn và cách nộp tiền thuế khoán</h2>
+        <p>Sau khi nhận Thông báo nộp thuế từ cơ quan thuế, hộ kinh doanh nộp tiền theo các hình thức:</p>
+        <ul>
+          <li><strong>Nộp trực tiếp</strong> tại Kho bạc Nhà nước hoặc ngân hàng thương mại được ủy nhiệm thu</li>
+          <li><strong>Nộp qua eTax Mobile</strong> (ứng dụng của Tổng cục Thuế) — nhanh và tiện nhất</li>
+          <li><strong>Nộp qua tài khoản ngân hàng</strong> với thông tin tài khoản nộp thuế ghi trong Thông báo</li>
+        </ul>
+
+        <table>
+          <thead>
+            <tr><th>Chu kỳ nộp</th><th>Thời hạn nộp</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Nộp theo tháng</td><td>Ngày cuối cùng của tháng phát sinh thuế</td></tr>
+            <tr><td>Nộp theo quý</td><td>Ngày cuối cùng của tháng đầu tiên quý tiếp theo</td></tr>
+            <tr><td>Nộp cả năm (một lần)</td><td>Theo thỏa thuận với Chi cục Thuế, thường trước 31/01 năm đó</td></tr>
+          </tbody>
+        </table>
+
+        <div class="warning-box">
+          <p>⚠️ <strong>Nộp trễ sẽ bị phạt:</strong> Mỗi ngày chậm nộp thuế bị tính lãi phạt <strong>0,03%/ngày</strong> trên số tiền thuế chậm nộp. Ví dụ: chậm 30 ngày với số thuế 1.000.000 đồng → phạt thêm 9.000 đồng tiền lãi.</p>
+        </div>
+
+        <h2>6. Thay đổi doanh thu — điều chỉnh mức thuế khoán</h2>
+        <p>Mức thuế khoán được cơ quan thuế xem xét lại hàng năm (thường vào tháng 11–12 năm trước cho năm sau). Nếu doanh thu thực tế của bạn thay đổi đáng kể so với mức khoán, bạn có thể:</p>
+
+        <h3>Trường hợp doanh thu tăng đột biến</h3>
+        <p>Hộ kinh doanh có trách nhiệm <strong>tự khai báo</strong> với Chi cục Thuế khi doanh thu thực tế vượt quá 50% mức doanh thu khoán đã được ấn định. Không khai báo có thể bị truy thu thuế và phạt vi phạm.</p>
+
+        <h3>Trường hợp doanh thu giảm hoặc tạm ngừng kinh doanh</h3>
+        <ul>
+          <li>Tạm ngừng liên tục từ <strong>15 ngày trở lên</strong>: được giảm trừ thuế theo số ngày thực tế không kinh doanh</li>
+          <li>Phải nộp <strong>văn bản thông báo tạm ngừng</strong> đến Chi cục Thuế trước ngày tạm ngừng</li>
+          <li>Nếu doanh thu năm sau dự kiến giảm, nộp <strong>Tờ khai điều chỉnh doanh thu khoán</strong> trong tháng 11–12 của năm hiện tại</li>
+        </ul>
+
+        <h2>7. Câu hỏi thường gặp</h2>
+
+        <h3>Hộ kinh doanh có cần xuất hóa đơn không?</h3>
+        <p>Hộ kinh doanh nộp thuế khoán <strong>không bắt buộc</strong> phải phát hành hóa đơn cho từng lần bán hàng. Tuy nhiên, nếu khách hàng (thường là doanh nghiệp) yêu cầu hóa đơn để hạch toán chi phí, hộ kinh doanh có thể đề nghị cơ quan thuế cấp hóa đơn lẻ từng lần hoặc đăng ký sử dụng hóa đơn điện tử.</p>
+
+        <h3>Có thể chuyển sang phương pháp kê khai thực tế không?</h3>
+        <p>Có. Nếu hộ kinh doanh muốn hạch toán chính xác theo doanh thu và chi phí thực tế, có thể đăng ký chuyển sang <strong>phương pháp kê khai</strong>. Phương pháp này phức tạp hơn nhưng có thể có lợi hơn nếu chi phí kinh doanh cao.</p>
+
+        <h3>Người thân trong gia đình có được tính là lao động để giảm chi phí không?</h3>
+        <p>Với phương pháp thuế khoán, không cần tính chi phí lao động vì thuế được tính trực tiếp trên doanh thu. Chi phí tiền lương chỉ được khấu trừ khi áp dụng phương pháp kê khai thực tế.</p>
+
+        <div class="info-box">
+          <p>🤖 <strong>AUTOBOT cho Hộ kinh doanh:</strong> Giao diện riêng dành cho hộ kinh doanh cá thể — tự tính thuế khoán, nhắc lịch nộp thuế, xuất chứng từ khi cần. Không cần kế toán chuyên nghiệp. <a href="https://autopostvn.cloud" target="_blank" style="color:#FB923C;">Dùng thử miễn phí 30 ngày →</a></p>
+        </div>
+
+      </article>
+    </main>
+
+    <aside class="sidebar">
+      <div class="cta-box">
+        <div class="cta-box-title">AUTOBOT dành cho<br>Hộ kinh doanh</div>
+        <div class="cta-box-sub">Tự tính thuế khoán, nhắc nộp thuế đúng hạn — không cần kế toán chuyên nghiệp.</div>
+        <a href="https://autopostvn.cloud" target="_blank" class="btn-cta">Dùng thử miễn phí →</a>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Liên hệ hỗ trợ</div>
+        <div class="contact-item">📞 <a href="tel:0889887988">Tư vấn 1: 088 988 7988</a></div>
+        <div class="contact-item">📞 <a href="tel:0971339239">Tư vấn 2: 0971 339 239</a></div>
+        <div class="contact-item">💬 <a href="https://zalo.me/1862014164765694405" target="_blank">Nhắn Zalo OA</a></div>
+        <div class="contact-item">✈️ <a href="https://t.me/autopostvn_bot" target="_blank">@autopostvn_bot</a></div>
+        <div class="contact-item">✉️ <a href="mailto:support@autopostvn.cloud">support@autopostvn.cloud</a></div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Bài viết liên quan</div>
+        <div class="related-post">
+          <div>
+            <div class="related-post-cat">Chính sách thuế</div>
+            <div class="related-post-title"><a href="blog-thong-tu-hoa-don-dien-tu-q2-2026.html">Thông tư mới về hóa đơn điện tử áp dụng từ Q2/2026</a></div>
+          </div>
+        </div>
+        <div class="related-post">
+          <div>
+            <div class="related-post-cat">Hướng dẫn</div>
+            <div class="related-post-title"><a href="blog-quyet-toan-thue-tncn-2025.html">Quyết toán thuế TNCN 2025 — Những điểm cần lưu ý</a></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-brand-row">
+      <img src="/icons/icon-192x192.png" alt="AUTOBOT" style="width:28px;height:28px;border-radius:6px;">
+      <span style="font-size:16px;font-weight:800;color:#fff;">AUTOBOT</span>
+    </div>
+    <div class="footer-desc">Nền tảng quản lý hóa đơn và khai thuế tự động dành cho doanh nghiệp Việt Nam.</div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2026 CÔNG TY TNHH AUTOPOST VN — MST: 0319267826</div>
+      <div class="footer-legal">
+        <a href="dieu-khoan.html">Điều khoản</a>
+        <a href="bao-mat.html">Bảo mật</a>
+        <a href="cookie.html">Cookie</a>
+        <a href="Landing Page.html#blog">← Blog</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
