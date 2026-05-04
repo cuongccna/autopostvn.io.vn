@@ -1,0 +1,86 @@
+Đã sửa UI xong. Xác nhận nhanh:
+
+order.html → Gọi POST /api/order với FormData + file GPKD
+Landing Page.html → Gọi POST /api/lead cho form đăng ký, POST /api/tax-otp cho xác thực thuế
+API keys đã xóa khỏi toàn bộ HTML (không còn dấu vết)
+
+Hướng dẫn deploy trên VPS Ubuntu 24.04
+Bước 1: Copy code lên VPS
+# Trên máy local, nén code (trừ .git, node_modules)
+tar --exclude='.git' --exclude='node_modules' -czf autobot.tar.gz .
+
+# Upload lên VPS
+scp autobot.tar.gz root@72.61.114.103:/root/
+
+# SSH vào VPS
+ssh root@72.61.114.103
+Bước 2: Tạo file .env — QUAN TRỌNG NHẤT
+cd /root
+tar -xzf autobot.tar.gz -C /root/autobot
+cd /root/autobot
+
+# Tạo .env từ template
+cp .env.example .env
+nano .env
+Trước khi deploy, bạn phải tạo 2 API key mới:
+
+Key	Hướng dẫn tạo
+TELEGRAM_BOT_TOKEN	Chat với @BotFather, gõ /newbot, copy token
+TELEGRAM_CHAT_ID	Gửi 1 tin nhắn bất kỳ cho bot, rồi truy cập https://api.telegram.org/bot<TOKEN>/getUpdates, copy chat.id
+RESEND_API_KEY	Đăng ký resend.com → API Keys → Create
+ADMIN_TOKEN	Chạy node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+File .env sau khi điền sẽ giống:
+
+PORT=3000
+NODE_ENV=production
+ADMIN_TOKEN=abc123def456...  (64 ký tự)
+TELEGRAM_BOT_TOKEN=123456:ABC-DEF...
+TELEGRAM_CHAT_ID=-100123456
+RESEND_API_KEY=re_xxxxxx
+MINIO_ENDPOINT=localhost
+MINIO_PORT=9000
+MINIO_ACCESS_KEY=minioadmin
+MINIO_SECRET_KEY=minioadmin
+MINIO_BUCKET=autobot-uploads
+MINIO_USE_SSL=false
+Bước 3: Deploy bằng script
+cd /root/autobot
+bash deploy.sh
+Script sẽ làm: cài Node.js 22 → cài Nginx → cài Certbot → copy file → npm install → tạo systemd service → reload Nginx.
+
+Bước 4: Cấp SSL
+certbot --nginx -d autopostvn.io.vn -d www.autopostvn.io.vn
+# Chọn redirect HTTP→HTTPS (option 2)
+Bước 5: Kiểm tra
+# Backend sống chưa
+curl https://autopostvn.io.vn/api/health
+
+# Log nếu lỗi
+journalctl -u autobot-backend -f
+Bước 6 (tuỳ chọn): Cài MinIO để lưu file GPKD
+bash /root/autobot/install-minio.sh
+
+# Sau cài, đổi mật khẩu MinIO mặc định:
+nano /etc/default/minio
+# Sửa MINIO_ROOT_USER và MINIO_ROOT_PASSWORD
+
+# Cập nhật .env với key mới:
+nano /root/autobot/.env
+# Sửa MINIO_ACCESS_KEY và MINIO_SECRET_KEY khớp với trên
+
+# Restart cả 2
+systemctl restart minio
+systemctl restart autobot-backend
+Các lệnh quản trị sau deploy
+systemctl status autobot-backend   # Xem trạng thái backend
+systemctl restart autobot-backend  # Restart sau khi sửa .env
+journalctl -u autobot-backend -f   # Live log
+nginx -t && systemctl reload nginx # Reload nginx
+File .env KHÔNG bị lộ — đừng commit nó
+File .gitignore đã chặn .env và *.db. Khi push code lên GitHub, các file này sẽ không bị lộ.
+
+Có 2 việc bạn cần làm trước khi chạy bash deploy.sh:
+
+Tạo Telegram Bot mới + Resend API key mới (key cũ đã lộ trong git history)
+Điền .env với key mới vừa tạo
+Xong 2 việc đó thì chạy 1 lệnh bash deploy.sh là xong.

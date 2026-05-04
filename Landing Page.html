@@ -1110,6 +1110,437 @@
   </div>
 </section>
 
+<!-- TAX SERVICE SECTION -->
+<style>
+  /* ===== TAX SERVICE CARD ===== */
+  #tax-service { background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%); padding: 96px 0; }
+  .tax-service-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  @media (max-width: 768px) { .tax-service-inner { grid-template-columns: 1fr; gap: 40px; } }
+  .tax-service-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); color: #A5B4FC; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 6px 14px; border-radius: 100px; margin-bottom: 20px; }
+  .tax-service-badge-dot { width: 6px; height: 6px; background: #6366F1; border-radius: 50%; animation: taxPulse 2s infinite; }
+  @keyframes taxPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+  .tax-service-title { font-size: 38px; font-weight: 900; color: white; line-height: 1.15; letter-spacing: -1px; margin-bottom: 16px; }
+  @media (max-width: 768px) { .tax-service-title { font-size: 28px; } }
+  .tax-service-desc { font-size: 15px; color: rgba(255,255,255,0.6); line-height: 1.75; margin-bottom: 28px; }
+  .tax-service-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+  .tax-service-feat { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.5; }
+  .tax-feat-check { width: 20px; height: 20px; background: rgba(99,102,241,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .btn-tax-start { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #6366F1, #4338CA); color: white; font-size: 16px; font-weight: 700; padding: 16px 32px; border-radius: 14px; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 8px 30px rgba(99,102,241,0.4); font-family: inherit; }
+  .btn-tax-start:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(99,102,241,0.5); }
+  .tax-service-card-right { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 36px; backdrop-filter: blur(10px); }
+  .tax-card-step { display: flex; gap: 16px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .tax-card-step:last-child { border-bottom: none; }
+  .tax-step-num { width: 32px; height: 32px; background: linear-gradient(135deg, #6366F1, #4338CA); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: white; flex-shrink: 0; }
+  .tax-step-title { font-size: 14px; font-weight: 700; color: white; margin-bottom: 4px; }
+  .tax-step-desc { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+  /* ===== OTP MODAL ===== */
+  #tax-otp-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 10000; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(4px); }
+  #tax-otp-modal.active { display: flex; }
+  .tax-modal-box { background: white; border-radius: 24px; padding: 40px 36px; max-width: 440px; width: 100%; box-shadow: 0 30px 80px rgba(0,0,0,0.3); text-align: center; position: relative; }
+  .tax-modal-icon { width: 64px; height: 64px; background: linear-gradient(135deg, #EEF2FF, #C7D2FE); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
+  .tax-modal-title { font-size: 22px; font-weight: 800; color: #111827; margin-bottom: 8px; }
+  .tax-modal-sub { font-size: 14px; color: #6B7280; line-height: 1.6; margin-bottom: 28px; }
+  .tax-otp-sending { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; color: #6366F1; font-weight: 600; margin-bottom: 20px; }
+  .tax-spinner { width: 18px; height: 18px; border: 2px solid #C7D2FE; border-top-color: #4338CA; border-radius: 50%; animation: taxSpin 0.8s linear infinite; flex-shrink: 0; }
+  @keyframes taxSpin { to { transform: rotate(360deg); } }
+  .tax-otp-input-wrap { display: flex; gap: 10px; margin-bottom: 12px; }
+  .tax-otp-input { flex: 1; border: 2px solid #E5E7EB; border-radius: 12px; padding: 14px 16px; font-size: 22px; font-weight: 800; letter-spacing: 6px; text-align: center; outline: none; transition: border 0.2s; font-family: monospace; }
+  .tax-otp-input:focus { border-color: #6366F1; }
+  .tax-otp-input.error { border-color: #EF4444; animation: taxShake 0.3s; }
+  @keyframes taxShake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .btn-tax-verify { width: 100%; padding: 14px; background: linear-gradient(135deg, #6366F1, #4338CA); color: white; font-size: 15px; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .btn-tax-verify:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,102,241,0.4); }
+  .btn-tax-verify:disabled { opacity: 0.5; cursor: not-allowed; }
+  .tax-countdown-wrap { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; font-size: 13px; color: #9CA3AF; }
+  .tax-countdown-num { font-size: 15px; font-weight: 700; color: #4338CA; min-width: 36px; }
+  .tax-countdown-num.urgent { color: #EF4444; }
+  .tax-otp-error { background: #FEF2F2; border: 1px solid #FECACA; color: #B91C1C; border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; display: none; }
+  .tax-modal-close { position: absolute; top: 16px; right: 16px; background: #F3F4F6; border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: #6B7280; transition: background 0.2s; }
+  .tax-modal-close:hover { background: #E5E7EB; }
+
+  /* ===== GUIDE PANEL ===== */
+  #tax-guide-panel { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 10000; align-items: flex-start; justify-content: flex-end; padding: 16px; backdrop-filter: blur(4px); overflow-y: auto; }
+  #tax-guide-panel.active { display: flex; }
+  .tax-guide-box { background: white; border-radius: 24px; padding: 36px 32px; max-width: 500px; width: 100%; box-shadow: 0 30px 80px rgba(0,0,0,0.25); margin-top: 16px; }
+  .tax-guide-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .tax-guide-title { font-size: 20px; font-weight: 800; color: #111827; }
+  .tax-guide-sub { font-size: 13.5px; color: #6B7280; margin-bottom: 28px; line-height: 1.6; }
+  .tax-guide-steps { display: flex; flex-direction: column; gap: 0; }
+  .tax-guide-step { display: flex; gap: 16px; padding: 20px 0; border-bottom: 1px solid #F3F4F6; position: relative; }
+  .tax-guide-step:last-child { border-bottom: none; }
+  .tax-guide-step-left { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .tax-guide-step-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; transition: all 0.3s; }
+  .tax-guide-step-num.pending { background: #EEF2FF; color: #4338CA; border: 2px solid #C7D2FE; }
+  .tax-guide-step-num.done { background: #ECFDF5; color: #059669; border: 2px solid #A7F3D0; }
+  .tax-guide-step-line { width: 2px; background: #E5E7EB; flex: 1; margin: 4px 0; min-height: 20px; }
+  .tax-guide-step-content { flex: 1; padding-bottom: 4px; }
+  .tax-guide-step-title { font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 6px; }
+  .tax-guide-step-desc { font-size: 13px; color: #6B7280; line-height: 1.6; margin-bottom: 12px; }
+  .btn-guide-action { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: linear-gradient(135deg, #6366F1, #4338CA); color: white; font-size: 13.5px; font-weight: 700; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s; text-decoration: none; font-family: inherit; }
+  .btn-guide-action:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(99,102,241,0.4); }
+  .btn-guide-done { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #ECFDF5; color: #059669; font-size: 13.5px; font-weight: 700; border-radius: 10px; border: 1.5px solid #A7F3D0; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+  .btn-guide-done:hover { background: #D1FAE5; }
+  .tax-bookmarklet-wrap { background: #FFF7ED; border: 1.5px dashed #FCD34D; border-radius: 12px; padding: 16px; margin-top: 8px; }
+  .tax-bookmarklet-label { font-size: 12px; font-weight: 700; color: #92400E; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .tax-bookmarklet-link { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; font-size: 13.5px; font-weight: 700; border-radius: 10px; text-decoration: none; cursor: grab; transition: all 0.2s; border: none; }
+  .tax-bookmarklet-link:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(245,158,11,0.4); }
+  .tax-bookmarklet-link:active { cursor: grabbing; }
+  .tax-bookmarklet-hint { font-size: 12px; color: #B45309; margin-top: 8px; line-height: 1.5; }
+  .tax-guide-close { background: #F3F4F6; border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; color: #6B7280; transition: background 0.2s; flex-shrink: 0; }
+  .tax-guide-close:hover { background: #E5E7EB; }
+  .tax-guide-success { background: linear-gradient(135deg, #ECFDF5, #D1FAE5); border: 1.5px solid #A7F3D0; border-radius: 16px; padding: 20px; text-align: center; margin-top: 20px; display: none; }
+  .tax-guide-success.active { display: block; }
+  .tax-guide-success-icon { font-size: 32px; margin-bottom: 8px; }
+  .tax-guide-success-text { font-size: 15px; font-weight: 700; color: #065F46; }
+  .tax-guide-success-sub { font-size: 13px; color: #059669; margin-top: 4px; }
+</style>
+
+<section id="tax-service">
+  <div class="container">
+    <div class="tax-service-inner">
+      <!-- LEFT: mô tả dịch vụ -->
+      <div>
+        <div class="tax-service-badge">
+          <span class="tax-service-badge-dot"></span>
+          Dịch vụ mới
+        </div>
+        <div class="tax-service-title">Dịch vụ<br>Thuế Điện Tử</div>
+        <div class="tax-service-desc">Hỗ trợ đổi chứng thư số trên hệ thống eTax khi quên mật khẩu — dùng tài khoản Cổng Dịch vụ Công quốc gia (USB token của chính bạn) để xác thực và cập nhật thông tin chứng thư số mới.</div>
+        <ul class="tax-service-features">
+          <li class="tax-service-feat">
+            <span class="tax-feat-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 4-4" stroke="#6366F1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Không cần nhớ mật khẩu eTax cũ — xác thực qua USB token của bạn
+          </li>
+          <li class="tax-service-feat">
+            <span class="tax-feat-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 4-4" stroke="#6366F1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Sử dụng SSO chính thức của dichvucong.gov.vn — an toàn, hợp lệ
+          </li>
+          <li class="tax-service-feat">
+            <span class="tax-feat-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 4-4" stroke="#6366F1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Hướng dẫn từng bước — hoàn thành trong dưới 5 phút
+          </li>
+          <li class="tax-service-feat">
+            <span class="tax-feat-check"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 4-4" stroke="#6366F1" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            Mã xác thực OTP có hiệu lực 3 phút — bảo mật tuyệt đối
+          </li>
+        </ul>
+        <button class="btn-tax-start" onclick="startTaxService()">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="white" stroke-width="1.8"/><path d="M8 7l5 3-5 3V7z" fill="white"/></svg>
+          Bắt đầu ngay
+        </button>
+      </div>
+      <!-- RIGHT: tóm tắt các bước -->
+      <div class="tax-service-card-right">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.4);margin-bottom:20px;">Quy trình thực hiện</div>
+        <div class="tax-card-step">
+          <div class="tax-step-num">1</div>
+          <div>
+            <div class="tax-step-title">Xác thực danh tính</div>
+            <div class="tax-step-desc">Nhập mã OTP được gửi về operator để xác nhận phiên làm việc của bạn</div>
+          </div>
+        </div>
+        <div class="tax-card-step">
+          <div class="tax-step-num">2</div>
+          <div>
+            <div class="tax-step-title">Đăng nhập Cổng Dịch vụ Công</div>
+            <div class="tax-step-desc">Cắm USB token, chọn "Tài khoản cấp bởi Cổng DVCQG", nhập mã PIN — hệ thống tự chuyển sang trang Thuế Điện Tử</div>
+          </div>
+        </div>
+        <div class="tax-card-step">
+          <div class="tax-step-num">3</div>
+          <div>
+            <div class="tax-step-title">Đổi chứng thư số mới</div>
+            <div class="tax-step-desc">Click bookmarklet đã kéo vào bookmark bar — đi thẳng tới trang đổi thông tin chứng thư số</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OTP MODAL -->
+<div id="tax-otp-modal">
+  <div class="tax-modal-box">
+    <button class="tax-modal-close" onclick="closeTaxModal()" title="Đóng">×</button>
+    <div class="tax-modal-icon">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="7" y="12" width="14" height="11" rx="2.5" stroke="#4338CA" stroke-width="2"/><path d="M10 12V9a4 4 0 018 0v3" stroke="#4338CA" stroke-width="2" stroke-linecap="round"/><circle cx="14" cy="17.5" r="1.5" fill="#4338CA"/></svg>
+    </div>
+    <div class="tax-modal-title">Xác thực bảo mật</div>
+    <div class="tax-modal-sub">Mã OTP đang được gửi cho operator qua Telegram. Vui lòng liên hệ để nhận mã và nhập vào bên dưới.</div>
+
+    <div class="tax-otp-sending" id="tax-sending-indicator">
+      <div class="tax-spinner"></div>
+      <span>Đang gửi mã OTP về Telegram...</span>
+    </div>
+
+    <div id="tax-otp-form" style="display:none;">
+      <div class="tax-otp-error" id="tax-otp-error"></div>
+      <div class="tax-otp-input-wrap">
+        <input class="tax-otp-input" id="tax-otp-input" type="text" maxlength="6" placeholder="——————" autocomplete="off" oninput="this.value=this.value.replace(/\D/g,'').slice(0,6)" onkeydown="if(event.key==='Enter')verifyTaxCode()"/>
+      </div>
+      <button class="btn-tax-verify" id="tax-verify-btn" onclick="verifyTaxCode()">Xác nhận mã</button>
+      <div class="tax-countdown-wrap">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#9CA3AF" stroke-width="1.5"/><path d="M7 4v3l2 1.5" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Mã hết hạn sau
+        <span class="tax-countdown-num" id="tax-countdown">3:00</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GUIDE PANEL -->
+<div id="tax-guide-panel">
+  <div class="tax-guide-box">
+    <div class="tax-guide-header">
+      <div class="tax-guide-title">Hướng dẫn từng bước</div>
+      <button class="tax-guide-close" onclick="closeTaxGuide()" title="Đóng">×</button>
+    </div>
+    <div class="tax-guide-sub">Làm theo các bước dưới đây. Bạn sẽ cần cắm USB token sẵn vào máy tính.</div>
+
+    <div class="tax-guide-steps">
+      <!-- BƯỚC 1 -->
+      <div class="tax-guide-step" id="guide-step-1">
+        <div class="tax-guide-step-left">
+          <div class="tax-guide-step-num pending" id="step-num-1">1</div>
+          <div class="tax-guide-step-line"></div>
+        </div>
+        <div class="tax-guide-step-content">
+          <div class="tax-guide-step-title">Mở Cổng Dịch vụ Công Quốc gia</div>
+          <div class="tax-guide-step-desc">
+            Trang sẽ mở ra ở tab mới. Tại trang đăng nhập, chọn:<br>
+            <strong>Tổ chức, Doanh nghiệp</strong> → <strong>Tài khoản cấp bởi Cổng DVCQG</strong><br>
+            Sau đó chọn <strong>USB Token</strong>, nhập mã PIN và đăng nhập.
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn-guide-action" onclick="openDVC()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Mở Cổng Dịch vụ Công
+            </button>
+            <button class="btn-guide-done" onclick="markStepDone(1)" id="step-done-1">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Đã đăng nhập xong
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BƯỚC 2 -->
+      <div class="tax-guide-step" id="guide-step-2">
+        <div class="tax-guide-step-left">
+          <div class="tax-guide-step-num pending" id="step-num-2">2</div>
+          <div class="tax-guide-step-line"></div>
+        </div>
+        <div class="tax-guide-step-content">
+          <div class="tax-guide-step-title">Chọn "Nộp thuế doanh nghiệp"</div>
+          <div class="tax-guide-step-desc">
+            Sau khi đăng nhập DVC thành công, vào menu:<br>
+            <strong>Thanh toán trực tuyến</strong> → <strong>Khai và nộp thuế doanh nghiệp</strong> → chọn <strong>Nộp thuế doanh nghiệp</strong><br>
+            Hệ thống sẽ tự động chuyển bạn sang trang <strong>thuedientu.gdt.gov.vn</strong> bằng session đã đăng nhập.
+          </div>
+          <button class="btn-guide-done" onclick="markStepDone(2)" id="step-done-2">
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Đã vào trang eTax xong
+          </button>
+        </div>
+      </div>
+
+      <!-- BƯỚC 3 -->
+      <div class="tax-guide-step" id="guide-step-3">
+        <div class="tax-guide-step-left">
+          <div class="tax-guide-step-num pending" id="step-num-3">3</div>
+        </div>
+        <div class="tax-guide-step-content">
+          <div class="tax-guide-step-title">Kéo bookmarklet vào thanh bookmark</div>
+          <div class="tax-guide-step-desc">
+            Kéo nút bên dưới vào <strong>thanh Bookmarks</strong> của trình duyệt (nếu chưa hiện thanh bookmark, bật bằng <kbd style="background:#F3F4F6;border:1px solid #D1D5DB;border-radius:4px;padding:1px 5px;font-size:11px;">Ctrl+Shift+B</kbd>).<br>
+            Sau đó, <strong>khi đang ở trang eTax</strong>, click bookmark đó để đi thẳng tới trang đổi chứng thư số.
+          </div>
+          <div class="tax-bookmarklet-wrap">
+            <div class="tax-bookmarklet-label">📌 Kéo vào thanh Bookmarks</div>
+            <a class="tax-bookmarklet-link"
+               href="javascript:(function(){if(typeof openPage==='function'){openPage('corpChangeTaxServiceRegisterProc');setTimeout(function(){history.replaceState(null,'','/etaxnnt/Request');},500);}else{alert('Ban chua vao dung trang eTax hoac trang chua san sang. Vui long vao lai trang thuedientu.gdt.gov.vn truoc.');}})();"
+               title="Kéo link này vào thanh Bookmarks">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 11h10" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+              eTax — Đổi Chứng Thư Số
+            </a>
+            <div class="tax-bookmarklet-hint">💡 Kéo nút vàng trên vào thanh bookmarks. Sau khi đã vào trang eTax, click bookmark đó để vào ngay trang đổi chứng thư số.</div>
+          </div>
+          <div style="margin-top:12px;">
+            <button class="btn-guide-done" onclick="markStepDone(3)">
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5l3 3 6-6" stroke="#059669" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Hoàn thành!
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tax-guide-success" id="tax-guide-success">
+      <div class="tax-guide-success-icon">🎉</div>
+      <div class="tax-guide-success-text">Hoàn tất tất cả các bước!</div>
+      <div class="tax-guide-success-sub">Bạn đã đổi chứng thư số thành công qua hệ thống Thuế Điện Tử.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  let _taxCode = null;
+  let _taxExpiry = null;
+  let _countdownTimer = null;
+  let _stepsCompleted = 0;
+
+  // ── Khởi động dịch vụ ──────────────────────────────────────
+  window.startTaxService = async function() {
+    // Sinh mã OTP 6 chữ số
+    _taxCode = String(Math.floor(100000 + Math.random() * 900000));
+    _taxExpiry = Date.now() + 180000; // 3 phút
+
+    // Hiện modal ở trạng thái đang gửi
+    const modal = document.getElementById('tax-otp-modal');
+    document.getElementById('tax-sending-indicator').style.display = 'flex';
+    document.getElementById('tax-otp-form').style.display = 'none';
+    document.getElementById('tax-otp-error').style.display = 'none';
+    document.getElementById('tax-otp-input').value = '';
+    document.getElementById('tax-otp-input').classList.remove('error');
+    modal.classList.add('active');
+    _stepsCompleted = 0;
+
+    // Gửi OTP qua backend API
+    try {
+      await fetch('/api/tax-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ otp: _taxCode })
+      });
+    } catch(e) { console.warn('OTP API error:', e); }
+
+    // Hiện form nhập mã
+    document.getElementById('tax-sending-indicator').style.display = 'none';
+    document.getElementById('tax-otp-form').style.display = 'block';
+    document.getElementById('tax-otp-input').focus();
+
+    // Bắt đầu countdown
+    startCountdown();
+  };
+
+  // ── Countdown timer ─────────────────────────────────────────
+  function startCountdown() {
+    if (_countdownTimer) clearInterval(_countdownTimer);
+    _countdownTimer = setInterval(function() {
+      const remaining = Math.max(0, _taxExpiry - Date.now());
+      const mins = Math.floor(remaining / 60000);
+      const secs = Math.floor((remaining % 60000) / 1000);
+      const el = document.getElementById('tax-countdown');
+      if (el) {
+        el.textContent = mins + ':' + String(secs).padStart(2, '0');
+        el.classList.toggle('urgent', remaining < 30000);
+      }
+      if (remaining === 0) {
+        clearInterval(_countdownTimer);
+        const input = document.getElementById('tax-otp-input');
+        const btn = document.getElementById('tax-verify-btn');
+        if (input) { input.disabled = true; input.placeholder = 'Đã hết hạn'; }
+        if (btn) { btn.disabled = true; btn.textContent = 'Mã đã hết hạn'; }
+        showOtpError('Mã OTP đã hết hạn. Vui lòng bắt đầu lại.');
+      }
+    }, 1000);
+  }
+
+  // ── Xác nhận mã ─────────────────────────────────────────────
+  window.verifyTaxCode = function() {
+    const input = document.getElementById('tax-otp-input');
+    const entered = (input.value || '').trim();
+
+    if (!entered) { shakeInput(); return; }
+
+    if (Date.now() > _taxExpiry) {
+      showOtpError('Mã OTP đã hết hạn. Vui lòng bắt đầu lại.');
+      shakeInput(); return;
+    }
+
+    if (entered !== _taxCode) {
+      showOtpError('Mã không đúng. Vui lòng kiểm tra lại.');
+      shakeInput(); return;
+    }
+
+    // Đúng mã — dọn dẹp và mở guide panel
+    clearInterval(_countdownTimer);
+    document.getElementById('tax-otp-modal').classList.remove('active');
+    _taxCode = null;
+
+    // Reset guide panel
+    [1,2,3].forEach(function(i) {
+      document.getElementById('step-num-' + i).className = 'tax-guide-step-num pending';
+      document.getElementById('step-num-' + i).textContent = i;
+    });
+    document.getElementById('tax-guide-success').classList.remove('active');
+    document.getElementById('tax-guide-panel').classList.add('active');
+  };
+
+  // ── Mở Cổng DVC ─────────────────────────────────────────────
+  window.openDVC = function() {
+    window.open('https://dichvucong.gov.vn/p/home/dvc-trang-chu.html', '_blank', 'noopener');
+  };
+
+  // ── Đánh dấu bước hoàn thành ────────────────────────────────
+  window.markStepDone = function(stepNum) {
+    const numEl = document.getElementById('step-num-' + stepNum);
+    if (numEl) {
+      numEl.className = 'tax-guide-step-num done';
+      numEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l4 4 6-6" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    }
+    _stepsCompleted = Math.max(_stepsCompleted, stepNum);
+    if (_stepsCompleted >= 3) {
+      document.getElementById('tax-guide-success').classList.add('active');
+    }
+  };
+
+  // ── Đóng modal / panel ───────────────────────────────────────
+  window.closeTaxModal = function() {
+    clearInterval(_countdownTimer);
+    _taxCode = null;
+    document.getElementById('tax-otp-modal').classList.remove('active');
+  };
+
+  window.closeTaxGuide = function() {
+    document.getElementById('tax-guide-panel').classList.remove('active');
+  };
+
+  // Nhấn Escape để đóng
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeTaxModal();
+      closeTaxGuide();
+    }
+  });
+
+  // Click backdrop để đóng modal
+  document.getElementById('tax-otp-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeTaxModal();
+  });
+  document.getElementById('tax-guide-panel').addEventListener('click', function(e) {
+    if (e.target === this) closeTaxGuide();
+  });
+
+  // ── Helpers ──────────────────────────────────────────────────
+  function showOtpError(msg) {
+    const el = document.getElementById('tax-otp-error');
+    if (el) { el.textContent = msg; el.style.display = 'block'; }
+  }
+
+  function shakeInput() {
+    const input = document.getElementById('tax-otp-input');
+    if (!input) return;
+    input.classList.remove('error');
+    void input.offsetWidth; // reflow
+    input.classList.add('error');
+    setTimeout(function() { input.classList.remove('error'); }, 400);
+  }
+})();
+</script>
+
 <!-- FOOTER -->
 <footer id="footer">
   <div class="container">
@@ -1454,57 +1885,29 @@ function LeadForm() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
 
-  const RESEND_KEY = 're_j4vyQKeY_KSEbM32amcu9T8BbrSVUzobC';
-  const TG_TOKEN  = '8623375977:AAFHvDEtsYoH-OjR-g24cGeKuRp1DVWtn-c';
-  const TG_CHAT   = '8329180268';
-
   const handle = e => setForm({...form, [e.target.name]: e.target.value});
-
-  const sendEmail = async (data) => {
-    try {
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          from: 'AUTOBOT <support@autopostvn.cloud>',
-          to: ['support@autopostvn.cloud'],
-          subject: `📩 Đăng ký mới từ ${data.name} — ${data.type}`,
-          html: `<h2>Khách hàng mới đăng ký AUTOBOT</h2>
-            <p><b>Họ tên:</b> ${data.name}</p>
-            <p><b>Số điện thoại:</b> ${data.phone}</p>
-            <p><b>Email:</b> ${data.email || 'Chưa cung cấp'}</p>
-            <p><b>Loại hình:</b> ${data.type}</p>
-            <p><b>Thời gian:</b> ${new Date().toLocaleString('vi-VN')}</p>`
-        })
-      });
-    } catch(e) { console.warn('Resend error:', e); }
-  };
-
-  const sendTelegram = async (data) => {
-    if(TG_CHAT === 'TELEGRAM_CHAT_ID') return;
-    try {
-      const msg = `📩 *Đăng ký mới AUTOBOT*\n\n` +
-        `👤 *Họ tên:* ${data.name}\n` +
-        `📞 *SĐT:* ${data.phone}\n` +
-        `✉️ *Email:* ${data.email || '—'}\n` +
-        `🏢 *Loại hình:* ${data.type}\n` +
-        `⏰ *Thời gian:* ${new Date().toLocaleString('vi-VN')}`;
-      await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: TG_CHAT, text: msg, parse_mode: 'Markdown' })
-      });
-    } catch(e) { console.warn('Telegram error:', e); }
-  };
 
   const submit = async (e) => {
     e.preventDefault();
     setError('');
     if(!form.phone || !form.name) { setError('Vui lòng nhập họ tên và số điện thoại.'); return; }
     setLoading(true);
-    await Promise.all([sendEmail(form), sendTelegram(form)]);
+    try {
+      const resp = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+      const result = await resp.json();
+      if (resp.ok && result.success) {
+        setSubmitted(true);
+      } else {
+        setError(result.error || 'Có lỗi xảy ra, vui lòng thử lại');
+      }
+    } catch(err) {
+      setError('Lỗi kết nối, vui lòng thử lại sau');
+    }
     setLoading(false);
-    setSubmitted(true);
   };
 
   if(submitted) return (
