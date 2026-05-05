@@ -1,86 +1,142 @@
-Đã sửa UI xong. Xác nhận nhanh:
+# AUTOBOT.AI — Hướng dẫn deploy trên VPS (Ubuntu 24.04)
+# Domain: autobot.ai.vn
+# Dùng Git pull + PM2
 
-order.html → Gọi POST /api/order với FormData + file GPKD
-Landing Page.html → Gọi POST /api/lead cho form đăng ký, POST /api/tax-otp cho xác thực thuế
-API keys đã xóa khỏi toàn bộ HTML (không còn dấu vết)
+## ── 1. Lần đầu: Clone repo + setup ──
 
-Hướng dẫn deploy trên VPS Ubuntu 24.04
-Bước 1: Copy code lên VPS
-# Trên máy local, nén code (trừ .git, node_modules)
-tar --exclude='.git' --exclude='node_modules' -czf autobot.tar.gz .
-
-# Upload lên VPS
-scp autobot.tar.gz root@72.61.114.103:/root/
-
-# SSH vào VPS
+```bash
 ssh root@72.61.114.103
-Bước 2: Tạo file .env — QUAN TRỌNG NHẤT
-cd /root
-tar -xzf autobot.tar.gz -C /root/autobot
-cd /root/autobot
 
-# Tạo .env từ template
+# Clone repo (nếu chưa có)
+cd /root
+git clone https://github.com/cuongccna/autopostvn.io.vn.git autobot
+cd autobot
+
+# Tạo file .env — QUAN TRỌNG
 cp .env.example .env
 nano .env
-Trước khi deploy, bạn phải tạo 2 API key mới:
+```
 
-Key	Hướng dẫn tạo
-TELEGRAM_BOT_TOKEN	Chat với @BotFather, gõ /newbot, copy token
-TELEGRAM_CHAT_ID	Gửi 1 tin nhắn bất kỳ cho bot, rồi truy cập https://api.telegram.org/bot<TOKEN>/getUpdates, copy chat.id
-RESEND_API_KEY	Đăng ký resend.com → API Keys → Create
-ADMIN_TOKEN	Chạy node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-File .env sau khi điền sẽ giống:
+### Các key cần điền vào .env:
 
-PORT=3000
-NODE_ENV=production
-ADMIN_TOKEN=abc123def456...  (64 ký tự)
-TELEGRAM_BOT_TOKEN=123456:ABC-DEF...
-TELEGRAM_CHAT_ID=-100123456
-RESEND_API_KEY=re_xxxxxx
-MINIO_ENDPOINT=localhost
-MINIO_PORT=9000
-MINIO_ACCESS_KEY=minioadmin
-MINIO_SECRET_KEY=minioadmin
-MINIO_BUCKET=autobot-uploads
-MINIO_USE_SSL=false
-Bước 3: Deploy bằng script
+| Key | Lấy ở đâu |
+|-----|-----------|
+| `TELEGRAM_BOT_TOKEN` | @BotFather → /newbot → copy token |
+| `TELEGRAM_CHAT_ID` | Gửi tin nhắn cho bot → `https://api.telegram.org/bot<TOKEN>/getUpdates` → copy `chat.id` |
+| `RESEND_API_KEY` | resend.com → API Keys → Create |
+| `ADMIN_TOKEN` | Chạy `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
+| MinIO | Để mặc định, cài sau |
+
+**KHÔNG dùng lại key cũ (đã lộ trong git history).**
+
+### Set git remote (để pull sau này)
+```bash
+git remote set-url origin https://github.com/cuongccna/autopostvn.io.vn.git
+```
+
+## ── 2. Deploy (lần đầu và các lần sau) ──
+
+```bash
 cd /root/autobot
 bash deploy.sh
-Script sẽ làm: cài Node.js 22 → cài Nginx → cài Certbot → copy file → npm install → tạo systemd service → reload Nginx.
+```
 
-Bước 4: Cấp SSL
-certbot --nginx -d autopostvn.io.vn -d www.autopostvn.io.vn
-# Chọn redirect HTTP→HTTPS (option 2)
-Bước 5: Kiểm tra
-# Backend sống chưa
-curl https://autopostvn.io.vn/api/health
+Script tự động làm:
+1. `git pull origin main`
+2. Cài Node.js 22 (nếu chưa có)
+3. Cài PM2 toàn cục (nếu chưa có)
+4. Copy frontend → `/var/www/invone/` (Landing Page.html → index.html)
+5. Copy backend → `/var/www/invone/backend/`
+6. `.env` được giữ nguyên (không bị ghi đè)
+7. `npm install --production`
+8. `pm2 startOrRestart` backend
+9. Copy nginx.conf, reload Nginx
 
-# Log nếu lỗi
-journalctl -u autobot-backend -f
-Bước 6 (tuỳ chọn): Cài MinIO để lưu file GPKD
-bash /root/autobot/install-minio.sh
+## ── 3. Sau deploy ──
 
-# Sau cài, đổi mật khẩu MinIO mặc định:
+### Kiểm tra
+```bash
+curl https://autobot.ai.vn/api/health
+# → {"status":"ok","version":"1.0.0",...}
+```
+
+### PM2 commands
+```bash
+pm2 status                       # Xem tất cả process
+pm2 logs autobot-backend         # Xem log realtime
+pm2 restart autobot-backend      # Restart sau khi sửa .env
+pm2 stop autobot-backend         # Dừng
+pm2 delete autobot-backend       # Xoá khỏi PM2
+pm2 startup                      # Tự động chạy khi reboot VPS
+```
+
+### Nginx commands
+```bash
+nginx -t                         # Kiểm tra config
+systemctl reload nginx           # Reload
+tail -f /var/log/nginx/access.log
+tail -f /var/log/nginx/error.log
+```
+
+## ── 4. Cài MinIO (nếu cần upload file GPKD) ──
+
+```bash
+cd /root/autobot
+bash install-minio.sh
+
+# Đổi mật khẩu mặc định
 nano /etc/default/minio
-# Sửa MINIO_ROOT_USER và MINIO_ROOT_PASSWORD
-
-# Cập nhật .env với key mới:
-nano /root/autobot/.env
-# Sửa MINIO_ACCESS_KEY và MINIO_SECRET_KEY khớp với trên
-
-# Restart cả 2
 systemctl restart minio
-systemctl restart autobot-backend
-Các lệnh quản trị sau deploy
-systemctl status autobot-backend   # Xem trạng thái backend
-systemctl restart autobot-backend  # Restart sau khi sửa .env
-journalctl -u autobot-backend -f   # Live log
-nginx -t && systemctl reload nginx # Reload nginx
-File .env KHÔNG bị lộ — đừng commit nó
-File .gitignore đã chặn .env và *.db. Khi push code lên GitHub, các file này sẽ không bị lộ.
 
-Có 2 việc bạn cần làm trước khi chạy bash deploy.sh:
+# Cập nhật .env
+cd /root/autobot
+nano .env
+pm2 restart autobot-backend
+```
 
-Tạo Telegram Bot mới + Resend API key mới (key cũ đã lộ trong git history)
-Điền .env với key mới vừa tạo
-Xong 2 việc đó thì chạy 1 lệnh bash deploy.sh là xong.
+## ── 5. Admin API ──
+
+| Endpoint | Mô tả |
+|----------|-------|
+| `GET /api/admin/orders?token=ADMIN_TOKEN` | Danh sách đơn hàng |
+| `GET /api/admin/orders/:id?token=ADMIN_TOKEN` | Chi tiết đơn |
+| `PATCH /api/admin/orders/:id/status?token=ADMIN_TOKEN` | Cập nhật trạng thái (body: `{"status":"confirmed"}`) |
+| `GET /api/admin/leads?token=ADMIN_TOKEN` | Danh sách lead |
+| `GET /api/admin/orders/:id/file?token=ADMIN_TOKEN` | Link xem file GPKD (presigned URL 15 phút) |
+
+Trạng thái hợp lệ: `new`, `confirmed`, `paid`, `activated`, `rejected`
+
+## ── 6. Cấu trúc thư mục trên VPS ──
+
+```
+/root/autobot/              ← Repo git (làm việc ở đây)
+  ├── .env                  ← API keys (KHÔNG commit)
+  ├── deploy.sh             ← Chạy mỗi lần deploy
+  ├── install-minio.sh
+  ├── nginx.conf
+  ├── Landing Page.html
+  ├── order.html
+  ├── backend/
+  │   ├── server.js
+  │   ├── ecosystem.config.js   ← PM2 config
+  │   └── ...
+
+/var/www/invone/            ← Web root
+  ├── index.html            ← Copy từ Landing Page.html (trang chủ)
+  ├── Landing Page.html
+  ├── order.html
+  ├── images/, icons/, ...
+  └── backend/              ← Backend production (npm install đã chạy)
+      ├── server.js
+      ├── db/autobot.db     ← SQLite database
+      ├── logs/             ← PM2 logs
+      └── ...
+```
+
+## ── 7. Lưu ý bảo mật ──
+
+- `.env` đã chặn trong `.gitignore` — không bao giờ lên git
+- `*.db` đã chặn — không bao giờ lên git
+- API keys cũ đã lộ — hủy trên Telegram/Resend, tạo mới
+- CSP + HSTS + rate limit đã bật trong nginx.conf
+- File upload validate server-side (loại file + kích thước)

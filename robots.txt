@@ -7,7 +7,7 @@ Allow: /
 # Disallow: /cookie.html
 
 # Sitemap
-Sitemap: https://autopostvn.io.vn/sitemap.xml
+Sitemap: https://autobot.ai.vn/sitemap.xml
 
 # Crawl delay (lịch sự với bot)
 Crawl-delay: 1

@@ -3,28 +3,28 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
   <url>
-    <loc>https://autopostvn.io.vn/</loc>
+    <loc>https://autobot.ai.vn/</loc>
     <lastmod>2026-04-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://autopostvn.io.vn/dieu-khoan.html</loc>
+    <loc>https://autobot.ai.vn/dieu-khoan.html</loc>
     <lastmod>2026-04-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <url>
-    <loc>https://autopostvn.io.vn/bao-mat.html</loc>
+    <loc>https://autobot.ai.vn/bao-mat.html</loc>
     <lastmod>2026-04-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <url>
-    <loc>https://autopostvn.io.vn/cookie.html</loc>
+    <loc>https://autobot.ai.vn/cookie.html</loc>
     <lastmod>2026-04-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
