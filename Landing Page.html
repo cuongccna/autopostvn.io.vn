@@ -1494,7 +1494,7 @@
     if (_socket && _socket.connected) return _socket;
 
     const wsPath = '/api/ws';
-    _socket = io({ path: wsPath, transports: ['websocket', 'polling'] });
+    _socket = io('/tax', { path: wsPath, transports: ['websocket', 'polling'] });
 
     _socket.on('connect', function() {
       console.log('[Tax] WebSocket connected:', _socket.id);
@@ -1668,7 +1668,7 @@
       });
 
       // Gửi lệnh start tới backend
-      socket.emit('tax:start', { test: true }, function(response) {
+      socket.emit('tax:start', {}, function(response) {
         if (response && response.error) {
           showTaxError(response.error);
           hideTaxProgress();

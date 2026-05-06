@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
-const { runTaxService, typePin, triggerAction } = require('../services/taxservice');
+const { runTaxService, typePin, navigateToETax, navigateToCertPage } = require('../services/taxservice');
 
 const sessions = new Map();
 
@@ -11,7 +11,7 @@ function createSession() {
   const id = uuidv4();
   const session = {
     id,
-    status: 'created',      // created | browser_ready | waiting_pin | logged_in | etax_ready | completed | error
+    status: 'created',
     page: null,
     pinCallback: null,
     createdAt: new Date().toISOString()
@@ -24,7 +24,7 @@ function cleanupSession(id) {
   const s = sessions.get(id);
   if (s) {
     if (s.page) {
-      s.page.close().catch(() => {});
+      try { s.page.close().catch(() => {}); } catch (e) {}
     }
     sessions.delete(id);
   }
@@ -38,8 +38,9 @@ function setupWebSocket(io) {
 
     let currentSession = null;
 
-    socket.on('tax:start', async ({ test = true } = {}, ack) => {
+    socket.on('tax:start', async (data, ack) => {
       try {
+        const test = data && data.test ? true : false;
         const session = createSession();
         currentSession = session;
         socket.join(session.id);
@@ -80,22 +81,12 @@ function setupWebSocket(io) {
         taxNamespace.to(session.id).emit('tax:step', {
           step: test
             ? 'Trình duyệt đã sẵn sàng. Đang hiển thị Cổng DVC...'
-            : 'Đã mở Cổng Dịch vụ Công. Đang tìm tùy chọn USB Token...'
+            : 'Trình duyệt ẩn đã sẵn sàng. Đang mở Cổng Dịch vụ Công...'
         });
-
-        if (test) {
-          // Trigger step 1 → select USB Token
-          await new Promise(r => setTimeout(r, 800));
-          await triggerAction(page, 'selectUSBToken');
-          session.status = 'waiting_pin';
-          taxNamespace.to(session.id).emit('tax:pin-request', {
-            message: 'Plugin chữ ký số yêu cầu mã PIN để đăng nhập USB Token'
-          });
-        }
 
       } catch (err) {
         console.error(`[Tax] Start error: ${err.message}`);
-        ack({ error: err.message });
+        try { ack({ error: err.message }); } catch (e) {}
         if (currentSession) {
           cleanupSession(currentSession.id);
           currentSession = null;
@@ -105,8 +96,8 @@ function setupWebSocket(io) {
 
     socket.on('tax:pin', async ({ sessionId, pin }, ack) => {
       try {
-        const session = getSession(sessionId);
-        if (!session) {
+        const session = sessionId ? getSession(sessionId) : currentSession;
+        if (!session || !session.page) {
           return ack({ error: 'Session không tồn tại hoặc đã hết hạn' });
         }
 
@@ -116,38 +107,57 @@ function setupWebSocket(io) {
 
         session.status = 'verifying_pin';
 
-        if (session.page) {
-          await typePin(session.page, pin);
-          session.status = 'logged_in';
-
-          taxNamespace.to(sessionId).emit('tax:step', {
-            step: `Đã xác thực PIN (${'*'.repeat(pin.length)}). Đăng nhập thành công!`
+        const typed = await typePin(session.page, pin);
+        if (!typed) {
+          taxNamespace.to(session.id).emit('tax:step', {
+            step: 'Đã nhập PIN nhưng không tìm thấy nút xác nhận. Đang thử lại...'
           });
-
-          // After PIN, continue to step 2
-          await new Promise(r => setTimeout(r, 1500));
-
-          if (session.page) {
-            await triggerAction(session.page, 'navToETax');
-            session.status = 'etax_ready';
-            taxNamespace.to(sessionId).emit('tax:step', {
-              step: 'Đã chuyển sang Thuế Điện Tử (thuedientu.gdt.gov.vn)'
-            });
-
-            // Auto-navigate to cert change page
-            await new Promise(r => setTimeout(r, 1000));
-            await triggerAction(session.page, 'callChangeCert');
-            session.status = 'completed';
-            taxNamespace.to(sessionId).emit('tax:complete', {
-              message: 'Đã đến trang Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
-            });
-          }
         }
 
-        ack({ success: true, status: session.status });
+        taxNamespace.to(session.id).emit('tax:step', {
+          step: `Đã xác thực PIN (${'*'.repeat(pin.length)}). Đang đăng nhập DVC...`
+        });
+
+        // Wait for DVC login to complete
+        await new Promise(r => setTimeout(r, 5000));
+
+        // Navigate to Thuế Điện Tử
+        session.status = 'navigating_etax';
+        taxNamespace.to(session.id).emit('tax:step', {
+          step: 'Đăng nhập DVC thành công! Đang chuyển sang Thuế Điện Tử...'
+        });
+
+        await navigateToETax(session.page);
+        await new Promise(r => setTimeout(r, 2000));
+
+        session.status = 'etax_ready';
+        taxNamespace.to(session.id).emit('tax:step', {
+          step: 'Đã chuyển sang Thuế Điện Tử (thuedientu.gdt.gov.vn)'
+        });
+
+        // Navigate to certificate change page
+        session.status = 'navigating_cert';
+        taxNamespace.to(session.id).emit('tax:step', {
+          step: 'Đang điều hướng tới trang Đổi Chứng Thư Số...'
+        });
+
+        await navigateToCertPage(session.page);
+        await new Promise(r => setTimeout(r, 2000));
+
+        session.status = 'completed';
+        taxNamespace.to(session.id).emit('tax:complete', {
+          message: 'Đã đến trang Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
+        });
+
+        console.log(`[Tax] ${session.id}: Completed — on cert page`);
+        ack({ success: true, status: 'completed' });
+
       } catch (err) {
+        console.error(`[Tax] PIN error: ${err.message}`);
         ack({ error: err.message });
-        taxNamespace.to(sessionId).emit('tax:error', { message: err.message });
+        if (sessionId) {
+          taxNamespace.to(sessionId).emit('tax:error', { message: err.message });
+        }
       }
     });
 
