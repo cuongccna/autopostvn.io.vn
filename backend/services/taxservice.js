@@ -339,22 +339,60 @@ async function typePin(page, pin) {
 async function navigateToETax(page) {
   console.log('[TaxService] navigateToETax: going to', ETAX_URL);
   await page.goto(ETAX_URL, { waitUntil: 'networkidle2', timeout: 30000 });
-  await new Promise(r => setTimeout(r, 3000));
+  await new Promise(r => setTimeout(r, 4000));
 
   const currentUrl = page.url();
   console.log('[TaxService] navigateToETax: landed at', currentUrl);
+  console.log('[TaxService] navigateToETax: page title:', await page.title().catch(() => '?'));
 
-  if (currentUrl.includes('dichvucong.gov.vn') || currentUrl.includes('sso') || currentUrl.includes('login')) {
+  // Log page content snippet
+  try {
+    const snippet = await page.evaluate(() => {
+      return {
+        url: location.href,
+        readyState: document.readyState,
+        bodyText: (document.body ? document.body.innerText : '').slice(0, 300),
+        scriptCount: document.scripts.length,
+        hasOpenPage: typeof openPage === 'function'
+      };
+    });
+    console.log('[TaxService] navigateToETax page info:', JSON.stringify(snippet, null, 2));
+  } catch (e) {
+    console.log('[TaxService] navigateToETax page info error:', e.message);
+  }
+
+  // If landed on SSO/login page, try deeper navigation
+  if (currentUrl.includes('dichvucong.gov.vn') || currentUrl.includes('sso') || currentUrl.includes('login') || currentUrl.includes('dang-nhap')) {
     console.log('[TaxService] navigateToETax: still on SSO/login, trying to click through...');
-    await page.evaluate(() => {
-      const links = Array.from(document.querySelectorAll('a[href*="thuedientu"], a[href*="gdt.gov"], a[href*="etax"]'));
+
+    // Try eTax direct links
+    const clicked = await page.evaluate(() => {
+      const links = Array.from(document.querySelectorAll(
+        'a[href*="thuedientu"], a[href*="gdt.gov"], a[href*="etax"], a[href*="etaxnnt"]'
+      ));
       if (links.length > 0) {
         console.log('Clicking:', links[0].href);
         links[0].click();
+        return links[0].href;
       }
+      return null;
     });
-    await new Promise(r => setTimeout(r, 3000));
+
+    console.log('[TaxService] navigateToETax: clicked link:', clicked);
+    await new Promise(r => setTimeout(r, 5000));
     console.log('[TaxService] navigateToETax: after click-through, URL:', page.url());
+    console.log('[TaxService] navigateToETax: after click-through, title:', await page.title().catch(() => '?'));
+
+    // If still stuck, try direct navigation to eTax dashboard
+    if (page.url().includes('login') || page.url().includes('sso')) {
+      console.log('[TaxService] navigateToETax: still stuck, trying direct eTax dashboard URL...');
+      await page.goto('https://thuedientu.gdt.gov.vn/etaxnnt/Home', {
+        waitUntil: 'networkidle2',
+        timeout: 30000
+      });
+      await new Promise(r => setTimeout(r, 4000));
+      console.log('[TaxService] navigateToETax: after dashboard goto, URL:', page.url());
+    }
   }
 }
 
@@ -526,26 +564,80 @@ function createTestPage() {
 }
 
 /**
- * Execute the eTax openPage script to trigger digital signature function
+ * Execute the eTax openPage script to trigger digital signature function.
+ * Handles both in-page SPA navigation and window.open popups.
  */
 async function callETaxOpenPage(page) {
-  console.log('[TaxService] callETaxOpenPage: executing openPage script...');
+  console.log('[TaxService] callETaxOpenPage: starting...');
+  console.log('[TaxService] callETaxOpenPage: current URL:', page.url());
+  console.log('[TaxService] callETaxOpenPage: page title:', await page.title().catch(() => '?'));
+  await new Promise(r => setTimeout(r, 4000));
 
+  // Log what's on the page
+  try {
+    const pageInfo = await page.evaluate(() => ({
+      url: location.href,
+      title: document.title,
+      bodyText: (document.body ? document.body.innerText : '').slice(0, 500),
+      hasOpenPage: typeof openPage === 'function',
+      hasFrames: window.frames ? window.frames.length : 0,
+      readyState: document.readyState
+    }));
+    console.log('[TaxService] Page info:', JSON.stringify(pageInfo, null, 2));
+  } catch (e) {
+    console.log('[TaxService] Could not get page info:', e.message);
+  }
+
+  // Listen for new targets (popups / new tabs) BEFORE calling openPage
+  const { getBrowser } = require('./browser');
+  let newTarget = null;
+  const browser = await getBrowser();
+  const targetHandler = (target) => {
+    if (target.type() === 'page') {
+      console.log('[TaxService] New target detected:', target.url());
+      newTarget = target;
+    }
+  };
+  browser.on('targetcreated', targetHandler);
+
+  // Execute the openPage script
+  console.log('[TaxService] Executing openPage script...');
   const result = await page.evaluate(() => {
     if (typeof openPage === 'function') {
-      openPage('corpChangeTaxServiceRegisterProc');
-      return { success: true, msg: 'openPage called successfully' };
+      try {
+        openPage('corpChangeTaxServiceRegisterProc');
+        return { success: true, msg: 'openPage called' };
+      } catch (e) {
+        return { success: false, msg: 'openPage threw: ' + e.message };
+      }
     }
-    return { success: false, msg: 'openPage function not found on page' };
+    return { success: false, msg: 'openPage not a function', typeofOpenPage: typeof openPage };
   });
 
-  console.log('[TaxService] callETaxOpenPage result:', result);
+  console.log('[TaxService] openPage result:', JSON.stringify(result));
 
-  // Wait for the new panel/tab to load
-  await new Promise(r => setTimeout(r, 3000));
-  console.log('[TaxService] callETaxOpenPage: after wait, URL:', page.url());
+  // Wait & check for navigation
+  await new Promise(r => setTimeout(r, 5000));
 
-  return result;
+  // Check if a new target/page was created
+  if (newTarget) {
+    console.log('[TaxService] New target URL:', newTarget.url());
+    try {
+      const popup = await newTarget.page();
+      console.log('[TaxService] Popup page title:', await popup.title());
+      console.log('[TaxService] Popup page URL:', popup.url());
+    } catch (e) {
+      console.log('[TaxService] Could not access popup:', e.message);
+    }
+  }
+
+  // Remove listener
+  browser.off('targetcreated', targetHandler);
+
+  console.log('[TaxService] After openPage, current URL:', page.url());
+  console.log('[TaxService] After openPage, page title:', await page.title().catch(() => '?'));
+
+  return { ...result, newTargetUrl: newTarget ? newTarget.url() : null };
 }
 
 module.exports = { runTaxService, typePin, triggerAction, navigateToETax, navigateToCertPage, callETaxOpenPage };
