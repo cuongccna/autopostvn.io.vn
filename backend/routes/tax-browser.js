@@ -96,8 +96,11 @@ function setupWebSocket(io) {
 
     socket.on('tax:pin', async ({ sessionId, pin }, ack) => {
       try {
+        console.log(`[Tax] PIN received from client, sessionId=${sessionId || '(from connection)'}, pinLen=${pin ? pin.length : 0}`);
+
         const session = sessionId ? getSession(sessionId) : currentSession;
         if (!session || !session.page) {
+          console.error(`[Tax] PIN: session not found (sessionId=${sessionId}, currentSession=${currentSession ? currentSession.id : 'null'})`);
           return ack({ error: 'Session không tồn tại hoặc đã hết hạn' });
         }
 
@@ -105,10 +108,14 @@ function setupWebSocket(io) {
           return ack({ error: 'PIN phải có ít nhất 4 ký tự' });
         }
 
+        console.log(`[Tax] ${session.id}: Typing PIN...`);
         session.status = 'verifying_pin';
 
         const typed = await typePin(session.page, pin);
+        console.log(`[Tax] ${session.id}: typePin result:`, typed);
+
         if (!typed) {
+          console.warn(`[Tax] ${session.id}: PIN typed but no submit button found`);
           taxNamespace.to(session.id).emit('tax:step', {
             step: 'Đã nhập PIN nhưng không tìm thấy nút xác nhận. Đang thử lại...'
           });
@@ -119,16 +126,20 @@ function setupWebSocket(io) {
         });
 
         // Wait for DVC login to complete
+        console.log(`[Tax] ${session.id}: Waiting 5s for DVC login...`);
         await new Promise(r => setTimeout(r, 5000));
+        console.log(`[Tax] ${session.id}: Current URL after login wait:`, session.page.url());
 
         // Navigate to Thuế Điện Tử
         session.status = 'navigating_etax';
+        console.log(`[Tax] ${session.id}: Navigating to eTax...`);
         taxNamespace.to(session.id).emit('tax:step', {
           step: 'Đăng nhập DVC thành công! Đang chuyển sang Thuế Điện Tử...'
         });
 
         await navigateToETax(session.page);
         await new Promise(r => setTimeout(r, 2000));
+        console.log(`[Tax] ${session.id}: After navigateToETax, URL:`, session.page.url());
 
         session.status = 'etax_ready';
         taxNamespace.to(session.id).emit('tax:step', {
@@ -137,19 +148,21 @@ function setupWebSocket(io) {
 
         // Navigate to certificate change page
         session.status = 'navigating_cert';
+        console.log(`[Tax] ${session.id}: Navigating to cert page...`);
         taxNamespace.to(session.id).emit('tax:step', {
           step: 'Đang điều hướng tới trang Đổi Chứng Thư Số...'
         });
 
         await navigateToCertPage(session.page);
         await new Promise(r => setTimeout(r, 2000));
+        console.log(`[Tax] ${session.id}: After navigateToCertPage, URL:`, session.page.url());
 
         session.status = 'completed';
         taxNamespace.to(session.id).emit('tax:complete', {
           message: 'Đã đến trang Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
         });
 
-        console.log(`[Tax] ${session.id}: Completed — on cert page`);
+        console.log(`[Tax] ${session.id}: Flow completed`);
         ack({ success: true, status: 'completed' });
 
       } catch (err) {

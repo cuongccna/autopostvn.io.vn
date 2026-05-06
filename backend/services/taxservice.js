@@ -77,15 +77,19 @@ async function runTestMode(page, callbacks) {
 async function runRealMode(page, callbacks) {
   // Step 1: Navigate to DVC
   callbacks.onStepUpdate('Đang mở Cổng Dịch vụ Công Quốc gia...');
+  console.log('[TaxService] Navigating to:', DVC_URL);
   await page.goto(DVC_URL, { waitUntil: 'networkidle2', timeout: 45000 });
   await new Promise(r => setTimeout(r, 2000));
 
-  // Detect if we're already on a login page (DVC SSO redirect)
+  // Detect if we're on a login page (DVC SSO redirect)
   const currentUrl = page.url();
+  console.log('[TaxService] Current URL after goto:', currentUrl);
   callbacks.onStepUpdate(`Trang hiện tại: ${new URL(currentUrl).hostname}`);
+  console.log('[TaxService] Page title:', await page.title());
 
   // Step 2: Find and click login / USB Token option on DVC homepage
   callbacks.onStepUpdate('Đang tìm tùy chọn đăng nhập...');
+  console.log('[TaxService] Scanning for login/USB token elements...');
 
   const loginFound = await page.evaluate(() => {
     const keywords = [
@@ -93,47 +97,67 @@ async function runRealMode(page, callbacks) {
       'chữ ký số', 'usbtoken', 'token', 'dvc-qg'
     ];
     const all = Array.from(document.querySelectorAll('a, button, div[role="button"], span[role="button"], .btn, [onclick]'));
+    const foundTexts = [];
     for (const el of all) {
-      const text = (el.textContent || '').toLowerCase();
+      const text = (el.textContent || '').toLowerCase().trim();
+      if (text.length > 0 && text.length < 100) {
+        foundTexts.push(text);
+      }
       for (const kw of keywords) {
         if (text.includes(kw)) {
           el.click();
-          return kw;
+          return { matched: kw, allTexts: foundTexts };
         }
       }
     }
-    return null;
+    return { matched: null, allTexts: foundTexts };
   });
 
-  if (loginFound) {
-    callbacks.onStepUpdate(`Đã click: "${loginFound}". Đang chờ trang đăng nhập...`);
+  console.log('[TaxService] Elements scanned:', (loginFound.allTexts || []).length, 'items');
+  console.log('[TaxService] Login match result:', loginFound.matched || 'NOT FOUND');
+
+  if (loginFound.matched) {
+    callbacks.onStepUpdate(`Đã click: "${loginFound.matched}". Đang chờ trang đăng nhập...`);
   } else {
+    console.log('[TaxService] No login button found, trying direct login URL...');
     callbacks.onStepUpdate('Đang thử URL đăng nhập trực tiếp...');
     // Try navigating directly to DVC login page
-    await page.goto('https://dichvucong.gov.vn/p/home/dvc-trang-chu.html', { waitUntil: 'networkidle2', timeout: 30000 });
+    const ssoUrl = 'https://dichvucong.gov.vn/p/home/dvc-trang-chu.html';
+    console.log('[TaxService] Navigating to:', ssoUrl);
+    await page.goto(ssoUrl, { waitUntil: 'networkidle2', timeout: 30000 });
+    console.log('[TaxService] After SSO goto, URL:', page.url());
+    console.log('[TaxService] Page title:', await page.title());
   }
 
   // Wait for navigation / page content to settle
   await new Promise(r => setTimeout(r, 3000));
+  console.log('[TaxService] After settle, final URL:', page.url());
 
   // Step 3: Detect PIN input field (plugin popup / iframe / modal)
   callbacks.onStepUpdate('Đang chờ plugin chữ ký số...');
+  console.log('[TaxService] Checking for PIN input fields...');
 
   const pinDetected = await detectPinInput(page);
+  console.log('[TaxService] PIN input detected (pass 1):', pinDetected);
+
   if (pinDetected) {
     callbacks.onStepUpdate('Plugin chữ ký số đã sẵn sàng');
     callbacks.onPinRequest('Plugin chữ ký số yêu cầu mã PIN để đăng nhập USB Token');
   } else {
     callbacks.onStepUpdate('Chưa phát hiện PIN input, tiếp tục tìm...');
+    console.log('[TaxService] No PIN input yet, trying click SSO login again...');
     // Try clicking login link again after page load
     await tryClickSSOLogin(page, callbacks);
     await new Promise(r => setTimeout(r, 2000));
 
     const pinDetected2 = await detectPinInput(page);
+    console.log('[TaxService] PIN input detected (pass 2):', pinDetected2);
+
     if (pinDetected2) {
       callbacks.onPinRequest('Plugin chữ ký số yêu cầu mã PIN để đăng nhập USB Token');
     } else {
       // If no PIN input found, keep browser alive and notify user
+      console.log('[TaxService] WARNING: No PIN input detected after 2 passes. Sending fallback pin-request.');
       callbacks.onStepUpdate('Đã đến trang đăng nhập DVC. Vui lòng nhập PIN nếu được yêu cầu.');
       callbacks.onPinRequest('Chưa phát hiện ô nhập PIN. Vui lòng kiểm tra USB Token và thử lại, hoặc nhập PIN thủ công.');
     }
@@ -214,6 +238,8 @@ async function tryClickSSOLogin(page, callbacks) {
  * Type PIN into the page (handles main page, iframes, and popups)
  */
 async function typePin(page, pin) {
+  console.log('[TaxService] typePin called, pin length:', pin.length);
+
   // Try on main page first
   const typed = await page.evaluate((pinValue) => {
     const selector = [
@@ -235,8 +261,6 @@ async function typePin(page, pin) {
       // Try to find and click submit button
       const submitSelector = [
         'button[type="submit"]', 'input[type="submit"]',
-        'button:has-text("Xác nhận")', 'button:has-text("Đăng nhập")',
-        'button:has-text("OK")', 'button:has-text("Submit")',
         '.btn-submit', '.btn-primary', '[class*="submit"]', '[class*="login"]'
       ].join(', ');
 
@@ -245,7 +269,7 @@ async function typePin(page, pin) {
         const txt = (btn.textContent || '').toLowerCase();
         if (txt.includes('xác nhận') || txt.includes('đăng nhập') || txt.includes('ok') || txt.includes('submit') || txt.includes('login') || txt.includes('tiếp')) {
           btn.click();
-          return 'clicked';
+          return 'clicked:' + txt.slice(0, 20);
         }
       }
 
@@ -268,12 +292,18 @@ async function typePin(page, pin) {
     return false;
   }, pin);
 
+  console.log('[TaxService] typePin main page result:', typed);
+
   // Try iframes
   if (!typed) {
+    console.log('[TaxService] typePin: trying iframes...');
     const frames = page.frames();
+    console.log('[TaxService] typePin: total frames:', frames.length);
     for (const frame of frames) {
       if (frame === page.mainFrame()) continue;
       try {
+        const frameUrl = frame.url();
+        console.log('[TaxService] typePin: checking frame:', frameUrl);
         const frameResult = await frame.evaluate((pinValue) => {
           const inputs = document.querySelectorAll(
             'input[type="password"], input[type="pin"], input[placeholder*="PIN"], input[name*="pin"], input[id*="pin"]'
@@ -291,10 +321,11 @@ async function typePin(page, pin) {
         }, pin);
 
         if (frameResult) {
+          console.log('[TaxService] typePin: PIN typed in frame:', frameUrl);
           return true;
         }
       } catch (e) {
-        // cross-origin iframe
+        console.log('[TaxService] typePin: cannot access frame (cross-origin):', e.message);
       }
     }
   }
@@ -306,18 +337,24 @@ async function typePin(page, pin) {
  * Navigate to Thuế Điện Tử (via SSO after DVC login)
  */
 async function navigateToETax(page) {
+  console.log('[TaxService] navigateToETax: going to', ETAX_URL);
   await page.goto(ETAX_URL, { waitUntil: 'networkidle2', timeout: 30000 });
   await new Promise(r => setTimeout(r, 3000));
 
-  // Check if we need to click through SSO
   const currentUrl = page.url();
+  console.log('[TaxService] navigateToETax: landed at', currentUrl);
+
   if (currentUrl.includes('dichvucong.gov.vn') || currentUrl.includes('sso') || currentUrl.includes('login')) {
-    // Still on SSO page, try clicking through
+    console.log('[TaxService] navigateToETax: still on SSO/login, trying to click through...');
     await page.evaluate(() => {
-      const links = Array.from(document.querySelectorAll('a[href*="thuedientu"], a[href*="gdt.gov"]'));
-      if (links.length > 0) links[0].click();
+      const links = Array.from(document.querySelectorAll('a[href*="thuedientu"], a[href*="gdt.gov"], a[href*="etax"]'));
+      if (links.length > 0) {
+        console.log('Clicking:', links[0].href);
+        links[0].click();
+      }
     });
     await new Promise(r => setTimeout(r, 3000));
+    console.log('[TaxService] navigateToETax: after click-through, URL:', page.url());
   }
 }
 
@@ -325,17 +362,19 @@ async function navigateToETax(page) {
  * Navigate to the digital certificate change page on eTax
  */
 async function navigateToCertPage(page) {
-  // Try direct navigation to eTax cert management
-  await page.goto('https://thuedientu.gdt.gov.vn/etaxnnt/Request', {
+  const certUrl = 'https://thuedientu.gdt.gov.vn/etaxnnt/Request';
+  console.log('[TaxService] navigateToCertPage: going to', certUrl);
+  await page.goto(certUrl, {
     waitUntil: 'networkidle2',
     timeout: 30000
   });
   await new Promise(r => setTimeout(r, 2000));
 
-  // Try alternative paths if needed
   const currentUrl = page.url();
+  console.log('[TaxService] navigateToCertPage: landed at', currentUrl);
+
   if (currentUrl.includes('login') || currentUrl.includes('sso')) {
-    // Need to click through the portal
+    console.log('[TaxService] navigateToCertPage: on login/SSO, trying to find cert page link...');
     await page.evaluate(() => {
       const certKeywords = ['chứng thư', 'đổi chứng thư', 'cert', 'chữ ký số', 'token'];
       const links = Array.from(document.querySelectorAll('a, button, div[role="button"]'));
@@ -343,13 +382,18 @@ async function navigateToCertPage(page) {
         const text = (el.textContent || '').toLowerCase();
         for (const kw of certKeywords) {
           if (text.includes(kw)) {
+            console.log('Clicking cert link:', text.slice(0, 30));
             el.click();
             return;
           }
         }
       }
+      console.log('No cert-related link found on page');
     });
     await new Promise(r => setTimeout(r, 3000));
+    console.log('[TaxService] navigateToCertPage: after click, URL:', page.url());
+  } else {
+    console.log('[TaxService] navigateToCertPage: SUCCESS - landed on cert page');
   }
 }
 

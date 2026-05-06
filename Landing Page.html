@@ -1535,13 +1535,13 @@
     });
 
     _socket.on('tax:error', function(data) {
-      console.error('[Tax] Error:', data.message);
+      console.error('[Tax] Error from backend:', data.message);
       updateProgress('Lỗi: ' + data.message);
       showTaxError(data.message);
     });
 
     _socket.on('tax:cancelled', function() {
-      console.log('[Tax] Cancelled');
+      console.log('[Tax] Cancelled by backend');
       hidePinModal();
       hideTaxProgress();
       hideCompleteModal();
@@ -1653,6 +1653,7 @@
   // ── Main: Start Tax Service ────────────────────────────────
   window.startTaxService = async function() {
     try {
+      console.log('[Tax] Starting tax service...');
       showTaxProgress();
       var socket = connectSocket();
 
@@ -1667,8 +1668,10 @@
         });
       });
 
+      console.log('[Tax] Socket connected, sending tax:start...');
       // Gửi lệnh start tới backend
       socket.emit('tax:start', {}, function(response) {
+        console.log('[Tax] tax:start ack:', response);
         if (response && response.error) {
           showTaxError(response.error);
           hideTaxProgress();
@@ -1703,8 +1706,10 @@
 
     hidePinModal();
     updateProgress('Đang xác thực PIN...');
+    console.log('[Tax] Sending PIN, sessionId:', _sessionId, 'pinLen:', pin.length);
 
     _socket.emit('tax:pin', { sessionId: _sessionId, pin: pin }, function(response) {
+      console.log('[Tax] PIN ack:', response);
       if (response && response.error) {
         showTaxError(response.error);
         return;
