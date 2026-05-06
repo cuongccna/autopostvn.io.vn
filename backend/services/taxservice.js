@@ -525,4 +525,27 @@ function createTestPage() {
 </body></html>`;
 }
 
-module.exports = { runTaxService, typePin, triggerAction, navigateToETax, navigateToCertPage };
+/**
+ * Execute the eTax openPage script to trigger digital signature function
+ */
+async function callETaxOpenPage(page) {
+  console.log('[TaxService] callETaxOpenPage: executing openPage script...');
+
+  const result = await page.evaluate(() => {
+    if (typeof openPage === 'function') {
+      openPage('corpChangeTaxServiceRegisterProc');
+      return { success: true, msg: 'openPage called successfully' };
+    }
+    return { success: false, msg: 'openPage function not found on page' };
+  });
+
+  console.log('[TaxService] callETaxOpenPage result:', result);
+
+  // Wait for the new panel/tab to load
+  await new Promise(r => setTimeout(r, 3000));
+  console.log('[TaxService] callETaxOpenPage: after wait, URL:', page.url());
+
+  return result;
+}
+
+module.exports = { runTaxService, typePin, triggerAction, navigateToETax, navigateToCertPage, callETaxOpenPage };

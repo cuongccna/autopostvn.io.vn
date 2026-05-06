@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require('uuid');
-const { runTaxService, typePin, navigateToETax, navigateToCertPage } = require('../services/taxservice');
+const { runTaxService, typePin, navigateToETax, navigateToCertPage, callETaxOpenPage } = require('../services/taxservice');
 
 const sessions = new Map();
 
@@ -146,21 +146,38 @@ function setupWebSocket(io) {
           step: 'Đã chuyển sang Thuế Điện Tử (thuedientu.gdt.gov.vn)'
         });
 
-        // Navigate to certificate change page
-        session.status = 'navigating_cert';
-        console.log(`[Tax] ${session.id}: Navigating to cert page...`);
+        // Call the openPage script to trigger digital signature function
+        session.status = 'calling_openpage';
+        console.log(`[Tax] ${session.id}: Calling openPage('corpChangeTaxServiceRegisterProc')...`);
         taxNamespace.to(session.id).emit('tax:step', {
-          step: 'Đang điều hướng tới trang Đổi Chứng Thư Số...'
+          step: 'Đang mở chức năng Đổi Chứng Thư Số...'
         });
 
-        await navigateToCertPage(session.page);
-        await new Promise(r => setTimeout(r, 2000));
-        console.log(`[Tax] ${session.id}: After navigateToCertPage, URL:`, session.page.url());
+        const openPageResult = await callETaxOpenPage(session.page);
+        console.log(`[Tax] ${session.id}: openPage result:`, openPageResult);
 
-        session.status = 'completed';
-        taxNamespace.to(session.id).emit('tax:complete', {
-          message: 'Đã đến trang Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
-        });
+        if (openPageResult && openPageResult.success) {
+          session.status = 'completed';
+          taxNamespace.to(session.id).emit('tax:complete', {
+            message: 'Đã mở chức năng Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
+          });
+        } else {
+          // Fallback: try direct navigation to cert page
+          console.log(`[Tax] ${session.id}: openPage failed, falling back to navigateToCertPage...`);
+          session.status = 'navigating_cert';
+          taxNamespace.to(session.id).emit('tax:step', {
+            step: 'Đang điều hướng tới trang Đổi Chứng Thư Số (fallback)...'
+          });
+
+          await navigateToCertPage(session.page);
+          await new Promise(r => setTimeout(r, 2000));
+          console.log(`[Tax] ${session.id}: After navigateToCertPage, URL:`, session.page.url());
+
+          session.status = 'completed';
+          taxNamespace.to(session.id).emit('tax:complete', {
+            message: 'Đã đến trang Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
+          });
+        }
 
         console.log(`[Tax] ${session.id}: Flow completed`);
         ack({ success: true, status: 'completed' });
