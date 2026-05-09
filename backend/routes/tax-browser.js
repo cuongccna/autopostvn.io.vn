@@ -119,6 +119,7 @@ function setupWebSocket(io) {
               onPinRequest: (msg) => {
                 console.log('[Tax] onPinRequest callback:', msg);
                 session.status = 'waiting_pin';
+                // Store page reference before emitting pin-request so it's available when pin is submitted
                 taxNamespace.to(session.id).emit('tax:pin-request', { message: msg });
               },
               onOpenETax: (url) => {
@@ -141,26 +142,20 @@ function setupWebSocket(io) {
             test
           );
           console.log('[Tax] runTaxService returned, page is:', typeof page, !!page);
-          
-          if (!page) {
-            console.error('[Tax] CRITICAL: page is null or undefined after runTaxService');
-            throw new Error('Browser page creation failed - page is undefined after runTaxService returned');
-          }
+
+          // Assign page to session INSIDE the try block (const page is scoped here)
+          session.page = page;
+          session.status = 'browser_ready';
+          console.log('[Tax] Session page assigned:', !!session.page);
+
+          taxNamespace.to(session.id).emit('tax:step', {
+            step: 'Trình duyệt đã sẵn sàng. Chuẩn bị xác thực USB Token...'
+          });
+
         } catch (runErr) {
-          console.error('[Tax] runTaxService error caught:', runErr);
-          console.error('[Tax] Error message:', runErr && runErr.message);
-          console.error('[Tax] Error stack:', runErr && runErr.stack);
+          console.error('[Tax] runTaxService error:', runErr && runErr.message, runErr && runErr.stack);
           throw new Error(`Không thể khởi tạo trình duyệt: ${runErr && runErr.message ? runErr.message : String(runErr)}`);
         }
-
-        session.page = page;
-        session.status = 'browser_ready';
-        
-        console.log('[Tax] Session page assigned:', !!session.page);
-
-        taxNamespace.to(session.id).emit('tax:step', {
-          step: 'Trình duyệt đã sẵn sàng. Chuẩn bị xác thực USB Token...'
-        });
 
       } catch (err) {
         console.error('[Tax] tax:verify-otp error:', err);
