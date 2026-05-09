@@ -1521,7 +1521,8 @@
 
     console.log('[Tax] Creating new socket connection...');
     const wsPath = '/api/ws';
-    const wsUrl = 'http://127.0.0.1:3000';
+    const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
+    const wsUrl = protocol + '//127.0.0.1:3000';
     _socket = io(wsUrl + '/tax', { path: wsPath, transports: ['websocket', 'polling'] });
 
     _socket.on('connect', function() {
