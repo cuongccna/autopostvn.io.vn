@@ -1,7 +1,15 @@
 const { v4: uuidv4 } = require('uuid');
 const { runTaxService, typePin, navigateToETax, navigateToCertPage, callETaxOpenPage } = require('../services/taxservice');
+const { sendTaxOtpNotification } = require('../services/telegram');
 
 const sessions = new Map();
+
+// Generate random OTP code (4 digits)
+function generateOTP() {
+  const otp = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+  console.log('[Tax] Generated OTP:', otp); // TODO: Remove in production
+  return otp;
+}
 
 function getSession(sessionId) {
   return sessions.get(sessionId);
@@ -9,12 +17,15 @@ function getSession(sessionId) {
 
 function createSession() {
   const id = uuidv4();
+  const otp = generateOTP();
   const session = {
     id,
+    otp,
     status: 'created',
     page: null,
     pinCallback: null,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    otpVerified: false
   };
   sessions.set(id, session);
   return session;
@@ -40,52 +51,29 @@ function setupWebSocket(io) {
 
     socket.on('tax:start', async (data, ack) => {
       try {
+        console.log('[Tax] tax:start event received');
         const test = data && data.test ? true : false;
         const session = createSession();
         currentSession = session;
         socket.join(session.id);
 
-        ack({ sessionId: session.id, status: 'created' });
+        ack({ sessionId: session.id, status: 'created', otp_required: true });
 
-        const page = await runTaxService(
-          {
-            onStepUpdate: (msg) => {
-              session.status = msg;
-              taxNamespace.to(session.id).emit('tax:step', { step: msg });
-              console.log(`[Tax] ${session.id}: ${msg}`);
-            },
-            onPinRequest: (msg) => {
-              session.status = 'waiting_pin';
-              taxNamespace.to(session.id).emit('tax:pin-request', { message: msg });
-              console.log(`[Tax] ${session.id}: PIN requested — ${msg}`);
-            },
-            onComplete: () => {
-              session.status = 'completed';
-              taxNamespace.to(session.id).emit('tax:complete', {
-                message: 'Đã đến trang Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
-              });
-              console.log(`[Tax] ${session.id}: Completed`);
-            },
-            onError: (err) => {
-              session.status = 'error';
-              taxNamespace.to(session.id).emit('tax:error', { message: err });
-              console.error(`[Tax] ${session.id}: Error — ${err}`);
-            }
-          },
-          test
-        );
-
-        session.page = page;
-        session.status = 'browser_ready';
-
-        taxNamespace.to(session.id).emit('tax:step', {
-          step: test
-            ? 'Trình duyệt đã sẵn sàng. Đang hiển thị Cổng DVC...'
-            : 'Trình duyệt ẩn đã sẵn sàng. Đang mở Cổng Dịch vụ Công...'
+        // Send OTP via Telegram (or show in console if not configured)
+        console.log('[Tax] Sending OTP:', session.otp);
+        await sendTaxOtpNotification(session.otp);
+        
+        // Request OTP from client - include OTP in dev mode if Telegram not configured
+        const devOtpMsg = process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_BOT_TOKEN !== 'YOUR_TELEGRAM_BOT_TOKEN' 
+          ? '' 
+          : ` (Dev mode: ${session.otp})`;
+        
+        // Request OTP from client
+        taxNamespace.to(session.id).emit('tax:otp-request', {
+          message: `Mã OTP đã được gửi qua Telegram. Vui lòng nhập mã để tiếp tục.${devOtpMsg}`
         });
 
       } catch (err) {
-        console.error(`[Tax] Start error: ${err.message}`);
         try { ack({ error: err.message }); } catch (e) {}
         if (currentSession) {
           cleanupSession(currentSession.id);
@@ -94,76 +82,157 @@ function setupWebSocket(io) {
       }
     });
 
+    socket.on('tax:verify-otp', async ({ sessionId, otp }, ack) => {
+      try {
+        console.log('[Tax] tax:verify-otp received, sessionId:', sessionId, 'otp:', otp);
+        const session = sessionId ? getSession(sessionId) : currentSession;
+        if (!session) {
+          console.error('[Tax] Session not found');
+          return ack({ error: 'Session không tồn tại' });
+        }
+
+        console.log('[Tax] Session OTP:', session.otp, 'Input OTP:', otp);
+        if (otp !== session.otp) {
+          console.log('[Tax] OTP mismatch');
+          return ack({ error: 'Mã OTP không chính xác. Vui lòng thử lại.' });
+        }
+
+        console.log('[Tax] OTP verified, starting browser...');
+        session.otpVerified = true;
+        ack({ success: true, message: 'Xác thực thành công' });
+
+        // Now start the tax service flow
+        const test = false; // TODO: read from session
+        session.status = 'initializing_browser';
+        console.log('[Tax] Emitting browser init step');
+        taxNamespace.to(session.id).emit('tax:step', { step: 'Khởi tạo trình duyệt...' });
+
+        try {
+          console.log('[Tax] Calling runTaxService...');
+          const page = await runTaxService(
+            {
+              onStepUpdate: (msg) => {
+                console.log('[Tax] Step update:', msg);
+                session.status = msg;
+                taxNamespace.to(session.id).emit('tax:step', { step: msg });
+              },
+              onPinRequest: (msg) => {
+                console.log('[Tax] PIN request:', msg);
+                session.status = 'waiting_pin';
+                taxNamespace.to(session.id).emit('tax:pin-request', { message: msg });
+              },
+              onOpenETax: (url) => {
+                console.log('[Tax] Opening eTax tab:', url);
+                taxNamespace.to(session.id).emit('tax:open-etax', { url: url });
+              },
+              onComplete: () => {
+                console.log('[Tax] Completed');
+                session.status = 'completed';
+                taxNamespace.to(session.id).emit('tax:complete', {
+                  message: 'Đã đến trang Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
+                });
+              },
+              onError: (err) => {
+                console.error('[Tax] Error:', err);
+                session.status = 'error';
+                taxNamespace.to(session.id).emit('tax:error', { message: err });
+              }
+            },
+            test
+          );
+          console.log('[Tax] Browser page created:', !!page);
+        } catch (runErr) {
+          console.error('[Tax] runTaxService error:', runErr);
+          throw runErr;
+        }
+
+        session.page = page;
+        session.status = 'browser_ready';
+
+        taxNamespace.to(session.id).emit('tax:step', {
+          step: 'Trình duyệt đã sẵn sàng. Chuẩn bị xác thực USB Token...'
+        });
+
+      } catch (err) {
+        console.error('[Tax] tax:verify-otp error:', err.message, err.stack);
+        ack({ error: err.message });
+        if (sessionId) {
+          taxNamespace.to(sessionId).emit('tax:error', { message: err.message });
+        }
+      }
+    });
+
     socket.on('tax:pin', async ({ sessionId, pin }, ack) => {
       try {
-        console.log(`[Tax] PIN received from client, sessionId=${sessionId || '(from connection)'}, pinLen=${pin ? pin.length : 0}`);
-
         const session = sessionId ? getSession(sessionId) : currentSession;
         if (!session || !session.page) {
-          console.error(`[Tax] PIN: session not found (sessionId=${sessionId}, currentSession=${currentSession ? currentSession.id : 'null'})`);
           return ack({ error: 'Session không tồn tại hoặc đã hết hạn' });
         }
 
-        if (!pin || pin.length < 4) {
-          return ack({ error: 'PIN phải có ít nhất 4 ký tự' });
+        if (!session.otpVerified) {
+          return ack({ error: 'Vui lòng xác thực OTP trước' });
         }
 
-        console.log(`[Tax] ${session.id}: Typing PIN...`);
+        // VALIDATION: PIN length check
+        if (!pin || pin.length < 4 || pin.length > 8) {
+          return ack({ error: 'PIN phải có 4-8 ký tự' });
+        }
+        
+        // VALIDATION: PIN should be numeric only
+        if (!/^\d+$/.test(pin)) {
+          return ack({ error: 'PIN chỉ được chứa các ký tự số (0-9)' });
+        }
+
         session.status = 'verifying_pin';
 
         const typed = await typePin(session.page, pin);
-        console.log(`[Tax] ${session.id}: typePin result:`, typed);
 
         if (!typed) {
-          console.warn(`[Tax] ${session.id}: PIN typed but no submit button found`);
           taxNamespace.to(session.id).emit('tax:step', {
             step: 'Đã nhập PIN nhưng không tìm thấy nút xác nhận. Đang thử lại...'
           });
         }
 
         taxNamespace.to(session.id).emit('tax:step', {
-          step: `Đã xác thực PIN (${'*'.repeat(pin.length)}). Đang đăng nhập DVC...`
+          step: `Đã xác thực PIN. Đang đăng nhập DVC...`
         });
 
         // Wait for DVC login to complete
-        console.log(`[Tax] ${session.id}: Waiting 5s for DVC login...`);
         await new Promise(r => setTimeout(r, 5000));
-        console.log(`[Tax] ${session.id}: Current URL after login wait:`, session.page.url());
 
         // Navigate to Thuế Điện Tử
         session.status = 'navigating_etax';
-        console.log(`[Tax] ${session.id}: Navigating to eTax...`);
         taxNamespace.to(session.id).emit('tax:step', {
           step: 'Đăng nhập DVC thành công! Đang chuyển sang Thuế Điện Tử...'
         });
 
         await navigateToETax(session.page);
         await new Promise(r => setTimeout(r, 2000));
-        console.log(`[Tax] ${session.id}: After navigateToETax, URL:`, session.page.url());
 
         session.status = 'etax_ready';
         taxNamespace.to(session.id).emit('tax:step', {
-          step: 'Đã chuyển sang Thuế Điện Tử (thuedientu.gdt.gov.vn)'
+          step: 'Đã chuyển sang Thuế Điện Tử'
         });
 
         // Call the openPage script to trigger digital signature function
         session.status = 'calling_openpage';
-        console.log(`[Tax] ${session.id}: Calling openPage('corpChangeTaxServiceRegisterProc')...`);
         taxNamespace.to(session.id).emit('tax:step', {
           step: 'Đang mở chức năng Đổi Chứng Thư Số...'
         });
 
         const openPageResult = await callETaxOpenPage(session.page);
-        console.log(`[Tax] ${session.id}: openPage result:`, openPageResult);
 
         if (openPageResult && openPageResult.success) {
           session.status = 'completed';
+          // Emit event to open eTax tab in user's browser
+          taxNamespace.to(session.id).emit('tax:open-etax', { 
+            url: 'https://thuedientu.gdt.gov.vn/etaxnnt/Request' 
+          });
           taxNamespace.to(session.id).emit('tax:complete', {
-            message: 'Đã mở chức năng Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
+            message: 'Đã mở tab Thuế Điện Tử - Trang Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
           });
         } else {
           // Fallback: try direct navigation to cert page
-          console.log(`[Tax] ${session.id}: openPage failed, falling back to navigateToCertPage...`);
           session.status = 'navigating_cert';
           taxNamespace.to(session.id).emit('tax:step', {
             step: 'Đang điều hướng tới trang Đổi Chứng Thư Số (fallback)...'
@@ -179,11 +248,9 @@ function setupWebSocket(io) {
           });
         }
 
-        console.log(`[Tax] ${session.id}: Flow completed`);
         ack({ success: true, status: 'completed' });
 
       } catch (err) {
-        console.error(`[Tax] PIN error: ${err.message}`);
         ack({ error: err.message });
         if (sessionId) {
           taxNamespace.to(sessionId).emit('tax:error', { message: err.message });
@@ -196,7 +263,6 @@ function setupWebSocket(io) {
       if (id) {
         cleanupSession(id);
         taxNamespace.to(id).emit('tax:cancelled', { message: 'Phiên đã bị huỷ' });
-        console.log(`[Tax] ${id}: Cancelled`);
         currentSession = null;
       }
     });
@@ -204,7 +270,6 @@ function setupWebSocket(io) {
     socket.on('disconnect', () => {
       if (currentSession) {
         cleanupSession(currentSession.id);
-        console.log(`[Tax] ${currentSession.id}: Cleaned up (client disconnected)`);
         currentSession = null;
       }
     });

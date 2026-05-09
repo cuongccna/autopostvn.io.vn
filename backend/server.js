@@ -36,7 +36,8 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', version: '2.0.0', time: new Date().toISOString() });
 });
 
-initDb();
+// initDb(); // TODO: Fix better-sqlite3 build on Windows
+try { initDb(); } catch (e) { console.warn('[INIT DB] Skipped:', e.message); }
 
 server.listen(PORT, '127.0.0.1', () => {
   console.log(`[AUTOBOT] Backend running on http://127.0.0.1:${PORT}`);

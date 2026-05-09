@@ -66,7 +66,11 @@ async function sendLeadNotification(data) {
 }
 
 async function sendTaxOtpNotification(otpCode) {
-  if (!TELEGRAM_TOKEN || TELEGRAM_TOKEN === 'YOUR_TELEGRAM_BOT_TOKEN') return;
+  console.log('[TG] sendTaxOtpNotification called with OTP:', otpCode);
+  if (!TELEGRAM_TOKEN || TELEGRAM_TOKEN === 'YOUR_TELEGRAM_BOT_TOKEN') {
+    console.log('[TG] TELEGRAM_TOKEN not configured, skipping OTP send');
+    return;
+  }
 
   const msg = [
     '🔐 *XÁC THỰC DỊCH VỤ THUẾ ĐIỆN TỬ*',
