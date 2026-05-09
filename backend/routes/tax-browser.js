@@ -232,18 +232,16 @@ function setupWebSocket(io) {
         });
 
         const openPageResult = await callETaxOpenPage(session.page);
+        const etaxUrl = 'https://thuedientu.gdt.gov.vn/etaxnnt/Request';
 
         if (openPageResult && openPageResult.success) {
           session.status = 'completed';
-          // Emit event to open eTax tab in user's browser
-          taxNamespace.to(session.id).emit('tax:open-etax', { 
-            url: 'https://thuedientu.gdt.gov.vn/etaxnnt/Request' 
-          });
+          taxNamespace.to(session.id).emit('tax:open-etax', { url: etaxUrl });
           taxNamespace.to(session.id).emit('tax:complete', {
             message: 'Đã mở tab Thuế Điện Tử - Trang Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
           });
         } else {
-          // Fallback: try direct navigation to cert page
+          // Fallback: navigate headless browser to cert page
           session.status = 'navigating_cert';
           taxNamespace.to(session.id).emit('tax:step', {
             step: 'Đang điều hướng tới trang Đổi Chứng Thư Số (fallback)...'
@@ -254,6 +252,8 @@ function setupWebSocket(io) {
           console.log(`[Tax] ${session.id}: After navigateToCertPage, URL:`, session.page.url());
 
           session.status = 'completed';
+          // Always open eTax in user's browser regardless of openPage success
+          taxNamespace.to(session.id).emit('tax:open-etax', { url: etaxUrl });
           taxNamespace.to(session.id).emit('tax:complete', {
             message: 'Đã đến trang Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
           });

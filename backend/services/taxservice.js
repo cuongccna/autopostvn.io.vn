@@ -510,11 +510,21 @@ async function callETaxOpenPage(page) {
   console.log('[TaxService] callETaxOpenPage: current URL:', page.url());
 
   // Navigate to the eTax Request page if not already there
-  if (!page.url().includes('thuedientu.gdt.gov.vn')) {
+  if (!page.url().includes('thuedientu.gdt.gov.vn/etaxnnt')) {
     console.log('[TaxService] Navigating to eTax Request page...');
     await page.goto(etaxUrl, { waitUntil: 'networkidle2', timeout: 30000 });
-    await new Promise(r => setTimeout(r, 3000));
+    await new Promise(r => setTimeout(r, 4000));
     console.log('[TaxService] After goto, URL:', page.url());
+  }
+
+  // Wait for page to be fully ready and for openPage to be defined
+  console.log('[TaxService] Waiting for openPage to be available...');
+  let hasOpenPage = false;
+  for (let attempt = 0; attempt < 6; attempt++) {
+    hasOpenPage = await page.evaluate(() => typeof openPage === 'function').catch(() => false);
+    console.log(`[TaxService] openPage check attempt ${attempt + 1}: ${hasOpenPage}`);
+    if (hasOpenPage) break;
+    await new Promise(r => setTimeout(r, 2000));
   }
 
   // Execute the bookmarklet: openPage('corpChangeTaxServiceRegisterProc')
@@ -534,7 +544,8 @@ async function callETaxOpenPage(page) {
             }
           } catch (fe) { /* cross-origin frame */ }
         }
-        return { success: false, msg: 'openPage is not defined on this page. URL: ' + location.href };
+        console.log('openPage not found. readyState:', document.readyState, 'URL:', location.href);
+        return { success: false, msg: 'openPage is not defined. URL: ' + location.href };
       }
     } catch (e) {
       return { success: false, msg: 'Error calling openPage: ' + e.message };
@@ -542,7 +553,9 @@ async function callETaxOpenPage(page) {
   });
 
   console.log('[TaxService] callETaxOpenPage result:', JSON.stringify(result));
-  await new Promise(r => setTimeout(r, 2000));
+  if (result.success) {
+    await new Promise(r => setTimeout(r, 2000));
+  }
 
   return result;
 }
