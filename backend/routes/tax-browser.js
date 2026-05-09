@@ -133,7 +133,7 @@ function setupWebSocket(io) {
                 });
               },
               onError: (err) => {
-                console.error('[Tax] Error:', err);
+                console.error('[Tax] Error in runTaxService:', err);
                 session.status = 'error';
                 taxNamespace.to(session.id).emit('tax:error', { message: err });
               }
@@ -141,9 +141,13 @@ function setupWebSocket(io) {
             test
           );
           console.log('[Tax] Browser page created:', !!page);
+          
+          if (!page) {
+            throw new Error('Browser page creation failed - page is undefined');
+          }
         } catch (runErr) {
-          console.error('[Tax] runTaxService error:', runErr);
-          throw runErr;
+          console.error('[Tax] runTaxService error:', runErr.message, runErr.stack);
+          throw new Error(`Không thể khởi tạo trình duyệt: ${runErr.message}`);
         }
 
         session.page = page;

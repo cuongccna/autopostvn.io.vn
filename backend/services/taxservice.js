@@ -23,9 +23,11 @@ const ETAX_URL = 'https://thuedientu.gdt.gov.vn';
  * @param {boolean} isTest - if true, use simulation page instead of real DVC
  */
 async function runTaxService(callbacks, isTest = false) {
-  const page = await newPage();
-
+  let page;
+  
   try {
+    page = await newPage();
+    
     if (isTest) {
       return await runTestMode(page, callbacks);
     }
@@ -33,8 +35,22 @@ async function runTaxService(callbacks, isTest = false) {
     return await runRealMode(page, callbacks);
 
   } catch (err) {
-    callbacks.onError(err.message);
-    try { await page.close(); } catch (e) { /* ignore */ }
+    // Log full error for debugging
+    console.error('[TaxService] runTaxService full error:', err.message, err.stack);
+    
+    // Call error callback with full error details
+    const errorMsg = err.message || err.toString() || 'Unknown error';
+    callbacks.onError(errorMsg);
+    
+    // Only close page if it was successfully created
+    if (page) {
+      try { 
+        await page.close(); 
+      } catch (e) { 
+        console.warn('[TaxService] Error closing page:', e.message);
+      }
+    }
+    
     throw err;
   }
 }
