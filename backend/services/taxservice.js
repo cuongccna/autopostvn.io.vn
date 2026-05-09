@@ -26,31 +26,47 @@ async function runTaxService(callbacks, isTest = false) {
   let page;
   
   try {
+    console.log('[TaxService] Starting runTaxService, isTest:', isTest);
     page = await newPage();
+    console.log('[TaxService] New page created successfully, page type:', typeof page);
     
-    if (isTest) {
-      return await runTestMode(page, callbacks);
+    if (!page) {
+      throw new Error('newPage() returned null or undefined');
     }
-
-    return await runRealMode(page, callbacks);
+    
+    let result;
+    if (isTest) {
+      console.log('[TaxService] Running test mode');
+      result = await runTestMode(page, callbacks);
+    } else {
+      console.log('[TaxService] Running real mode');
+      result = await runRealMode(page, callbacks);
+    }
+    
+    console.log('[TaxService] Mode completed, result type:', typeof result);
+    
+    if (!result) {
+      console.error('[TaxService] WARNING: Mode function returned null or undefined');
+      return page; // Return the original page object
+    }
+    
+    return result;
 
   } catch (err) {
     // Log full error for debugging
-    console.error('[TaxService] runTaxService full error:', err.message, err.stack);
-    
-    // Call error callback with full error details
-    const errorMsg = err.message || err.toString() || 'Unknown error';
-    callbacks.onError(errorMsg);
+    console.error('[TaxService] runTaxService caught error:', err.message || String(err));
+    console.error('[TaxService] Error stack:', err && err.stack);
     
     // Only close page if it was successfully created
     if (page) {
       try { 
         await page.close(); 
-      } catch (e) { 
-        console.warn('[TaxService] Error closing page:', e.message);
+      } catch (closeErr) { 
+        console.warn('[TaxService] Error closing page:', closeErr.message);
       }
     }
     
+    // Re-throw the error - let the caller handle it
     throw err;
   }
 }

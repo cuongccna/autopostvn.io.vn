@@ -112,56 +112,68 @@ function setupWebSocket(io) {
           const page = await runTaxService(
             {
               onStepUpdate: (msg) => {
-                console.log('[Tax] Step update:', msg);
+                console.log('[Tax] onStepUpdate callback:', msg);
                 session.status = msg;
                 taxNamespace.to(session.id).emit('tax:step', { step: msg });
               },
               onPinRequest: (msg) => {
-                console.log('[Tax] PIN request:', msg);
+                console.log('[Tax] onPinRequest callback:', msg);
                 session.status = 'waiting_pin';
                 taxNamespace.to(session.id).emit('tax:pin-request', { message: msg });
               },
               onOpenETax: (url) => {
-                console.log('[Tax] Opening eTax tab:', url);
+                console.log('[Tax] onOpenETax callback:', url);
                 taxNamespace.to(session.id).emit('tax:open-etax', { url: url });
               },
               onComplete: () => {
-                console.log('[Tax] Completed');
+                console.log('[Tax] onComplete callback');
                 session.status = 'completed';
                 taxNamespace.to(session.id).emit('tax:complete', {
                   message: 'Đã đến trang Đổi Chứng Thư Số. Bạn có thể thao tác trực tiếp trên trình duyệt.'
                 });
               },
               onError: (err) => {
-                console.error('[Tax] Error in runTaxService:', err);
+                console.error('[Tax] onError callback:', err);
                 session.status = 'error';
-                taxNamespace.to(session.id).emit('tax:error', { message: err });
+                taxNamespace.to(session.id).emit('tax:error', { message: String(err) });
               }
             },
             test
           );
-          console.log('[Tax] Browser page created:', !!page);
+          console.log('[Tax] runTaxService returned, page is:', typeof page, !!page);
           
           if (!page) {
-            throw new Error('Browser page creation failed - page is undefined');
+            console.error('[Tax] CRITICAL: page is null or undefined after runTaxService');
+            throw new Error('Browser page creation failed - page is undefined after runTaxService returned');
           }
         } catch (runErr) {
-          console.error('[Tax] runTaxService error:', runErr.message, runErr.stack);
-          throw new Error(`Không thể khởi tạo trình duyệt: ${runErr.message}`);
+          console.error('[Tax] runTaxService error caught:', runErr);
+          console.error('[Tax] Error message:', runErr && runErr.message);
+          console.error('[Tax] Error stack:', runErr && runErr.stack);
+          throw new Error(`Không thể khởi tạo trình duyệt: ${runErr && runErr.message ? runErr.message : String(runErr)}`);
         }
 
         session.page = page;
         session.status = 'browser_ready';
+        
+        console.log('[Tax] Session page assigned:', !!session.page);
 
         taxNamespace.to(session.id).emit('tax:step', {
           step: 'Trình duyệt đã sẵn sàng. Chuẩn bị xác thực USB Token...'
         });
 
       } catch (err) {
-        console.error('[Tax] tax:verify-otp error:', err.message, err.stack);
-        ack({ error: err.message });
+        console.error('[Tax] tax:verify-otp error:', err);
+        console.error('[Tax] error type:', typeof err);
+        console.error('[Tax] error.message:', err && err.message);
+        console.error('[Tax] error.stack:', err && err.stack);
+        
+        const errorMessage = err && err.message ? err.message : (err ? String(err) : 'Unknown error');
+        console.error('[Tax] Final error message:', errorMessage);
+        
+        ack({ error: errorMessage });
         if (sessionId) {
-          taxNamespace.to(sessionId).emit('tax:error', { message: err.message });
+          taxNamespace.to(sessionId).emit('tax:error', { message: errorMessage });
         }
       }
     });
