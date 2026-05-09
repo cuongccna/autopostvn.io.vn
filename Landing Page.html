@@ -1520,10 +1520,11 @@
     }
 
     console.log('[Tax] Creating new socket connection...');
-    const wsPath = '/api/ws';
-    const protocol = window.location.protocol === 'https:' ? 'https:' : 'http:';
-    const wsUrl = protocol + '//127.0.0.1:3000';
-    _socket = io(wsUrl + '/tax', { path: wsPath, transports: ['websocket', 'polling'] });
+    // Use current origin to connect through Nginx reverse proxy
+    _socket = io(window.location.origin + '/tax', { 
+      path: '/api/ws',
+      transports: ['websocket', 'polling']
+    });
 
     _socket.on('connect', function() {
       console.log('[Tax] WebSocket connected:', _socket.id);
